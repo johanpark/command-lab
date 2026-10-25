@@ -1,0 +1,6 @@
+# 컨테이너 안에서 실행되는 파일은 항상 LF (Windows 체크아웃 시 CRLF 방지)
+*.sh text eol=lf
+lib/bin/* text eol=lf
+scenarios/** text eol=lf
+envs/** text eol=lf
+*.ps1 text eol=lf

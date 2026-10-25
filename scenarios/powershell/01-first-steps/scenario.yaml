@@ -1,0 +1,5 @@
+title: PowerShell 첫걸음
+level: 1
+minutes: 15
+tags: [Get-ChildItem, Set-Location, Get-Content, Copy-Item, New-Item]
+summary: PowerShell의 기본 cmdlet으로 폴더를 이동하고 파일을 읽고 복사한다.

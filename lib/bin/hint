@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# 사용법: hint        다음 힌트
+#         hint 2      2번 힌트
+#         hint all    모든 힌트
+F=/opt/cmdlab/scenario/hints.md
+COUNTER=/opt/cmdlab/run/hint-count-$(id -u)
+
+if [ ! -s "$F" ]; then echo "이 시나리오에는 힌트가 없어요."; exit 0; fi
+
+total=$(awk 'BEGIN{n=1} /^---[[:space:]]*$/{n++} END{print n}' "$F")
+show() {
+  printf '\033[33m💡 힌트 %s/%s\033[0m\n' "$1" "$total"
+  awk -v k="$1" 'BEGIN{n=1} /^---[[:space:]]*$/{n++; next} n==k' "$F" | sed '/./,$!d'
+  echo
+}
+
+case "${1:-next}" in
+  all)
+    for i in $(seq 1 "$total"); do show "$i"; done ;;
+  next)
+    n=$(( $(cat "$COUNTER" 2>/dev/null || echo 0) + 1 ))
+    if [ "$n" -gt "$total" ]; then n=$total; fi
+    echo "$n" > "$COUNTER"
+    show "$n"
+    if [ "$n" -eq "$total" ]; then echo "(마지막 힌트예요)"; fi ;;
+  *[!0-9]*|0)
+    echo "사용법: hint | hint <번호> | hint all"; exit 1 ;;
+  *)
+    if [ "$1" -gt "$total" ]; then echo "힌트는 ${total}개까지 있어요."; exit 1; fi
+    show "$1" ;;
+esac

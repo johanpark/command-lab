@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Command Lab</title>
+  <link rel="stylesheet" href="/vendor/xterm.css">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <button class="icon-btn menu-btn" id="menu-btn" aria-label="시나리오 목록 열기">☰</button>
+    <a class="brand" href="#">command<span>-lab</span></a>
+    <div class="summary" id="summary"></div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="docker-warning" id="docker-warning" hidden>
+        Docker에 연결할 수 없어요. Docker Desktop을 실행한 뒤 새로고침하세요.
+      </div>
+      <nav id="scenario-list" aria-label="시나리오 목록"></nav>
+      <div class="legend">
+        <span><i class="dot done"></i>통과</span>
+        <span><i class="dot review"></i>복습</span>
+        <span><i class="dot tried"></i>시도</span>
+        <span><i class="dot new"></i>새 문제</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="welcome" id="welcome">
+        <h1>상황 속에서 명령어를 익히는 실습장</h1>
+        <p>왼쪽에서 시나리오를 고르세요. 진짜 리눅스 컨테이너가 만들어지고, 문제 상황을 직접 해결하면 자동으로 채점됩니다.</p>
+        <ol>
+          <li><b>시작</b>: 문제 상황이 담긴 실습 환경이 만들어져요.</li>
+          <li><b>실습</b>: 오른쪽 터미널에 직접 명령어를 입력해요. 막히면 <b>힌트</b>를 보세요.</li>
+          <li><b>채점</b>: 결과 상태를 검사해요. 정답 명령어는 하나가 아니에요.</li>
+          <li><b>복습</b>: 통과한 문제는 1일 → 3일 → 7일… 간격으로 다시 풀어요.</li>
+        </ol>
+        <div class="next-up" id="next-up"></div>
+      </section>
+
+      <section class="detail" id="detail" hidden>
+        <div class="toolbar">
+          <div class="title-wrap">
+            <div class="crumbs" id="d-crumbs"></div>
+            <h2 id="d-title"></h2>
+          </div>
+          <div class="actions">
+            <button class="btn primary" id="btn-start">▶ 시작</button>
+            <button class="btn" id="btn-check" disabled>✓ 채점</button>
+            <button class="btn" id="btn-hint">💡 힌트</button>
+            <button class="btn" id="btn-debrief">📖 해설</button>
+            <button class="btn ghost" id="btn-stop" disabled>■ 종료</button>
+          </div>
+        </div>
+
+        <div class="split">
+          <div class="panel task-panel">
+            <div class="result" id="result" hidden></div>
+            <article class="markdown" id="task"></article>
+            <div id="hints"></div>
+            <div class="history" id="history" hidden></div>
+            <article class="markdown debrief" id="debrief" hidden></article>
+          </div>
+
+          <div class="panel term-panel">
+            <div class="term" id="term"></div>
+            <div class="overlay" id="overlay">
+              <div class="overlay-box">
+                <p id="overlay-msg">시작 버튼을 누르면 실습 환경이 만들어집니다.</p>
+                <pre class="build-log" id="build-log" hidden></pre>
+                <div class="overlay-actions" id="overlay-actions"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/vendor/xterm.js"></script>
+  <script src="/vendor/addon-fit.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>

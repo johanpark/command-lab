@@ -1,0 +1,5 @@
+title: 첫 커밋 만들기
+level: 1
+minutes: 15
+tags: [git init, git status, git add, git commit, git log]
+summary: 평범한 폴더를 Git 저장소로 만들고 첫 커밋을 남긴다.

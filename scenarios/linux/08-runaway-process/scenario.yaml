@@ -1,0 +1,5 @@
+title: CPU를 잡아먹는 프로세스
+level: 2
+minutes: 15
+tags: [ps, top, pgrep, kill, 프로세스]
+summary: CPU를 과하게 쓰는 프로세스를 찾아 종료하되, 살아 있어야 할 프로세스는 건드리지 않는다.

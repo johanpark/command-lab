@@ -1,0 +1,5 @@
+title: 객체 파이프라인으로 매출 분석
+level: 2
+minutes: 20
+tags: [Import-Csv, Where-Object, Group-Object, Measure-Object, Export-Csv]
+summary: 텍스트가 아니라 객체가 흐르는 PowerShell 파이프라인으로 CSV를 집계하고 필터링한다.

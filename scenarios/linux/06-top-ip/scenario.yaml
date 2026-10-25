@@ -1,0 +1,5 @@
+title: 수상한 접속 IP 찾기
+level: 2
+minutes: 20
+tags: [파이프, awk, cut, sort, uniq, head]
+summary: 여러 명령을 파이프로 연결해 접속 로그를 집계한다.

@@ -1,0 +1,5 @@
+title: Permission denied 해결하기
+level: 2
+minutes: 15
+tags: [chmod, ls -l, 권한, 실행]
+summary: 실행 권한이 없는 스크립트를 실행 가능하게 하고, 민감한 파일의 권한을 좁힌다.

@@ -1,0 +1,5 @@
+title: 다운로드 폴더 대청소
+level: 1
+minutes: 15
+tags: [와일드카드, mv, rm, ls]
+summary: "'*' 와일드카드로 여러 파일을 한 번에 옮기고 지운다."

@@ -1,0 +1,5 @@
+title: 비밀번호를 커밋해 버렸다
+level: 2
+minutes: 20
+tags: [git rm --cached, git commit --amend, .gitignore, git reset]
+summary: 마지막 커밋에 실수로 들어간 비밀 파일을 기록에서 빼고, 다시는 안 들어가게 막는다.

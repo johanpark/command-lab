@@ -1,0 +1,5 @@
+title: 에러 로그 살펴보기
+level: 2
+minutes: 15
+tags: [head, tail, grep, wc, 리다이렉션]
+summary: 긴 로그 파일에서 필요한 부분만 골라 보고, 결과를 파일로 저장한다.

@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# 지금 상태가 문제의 목표를 만족하는지 채점한다.
+if [ "$(id -u)" -ne 0 ]; then
+  if sudo -n true 2>/dev/null; then exec sudo -n bash "$0" "$@"; fi
+  echo "여기서는 채점할 수 없어요. 호스트에서 'lab check' 를 실행하세요."
+  exit 2
+fi
+cd / || exit 1
+bash /opt/cmdlab/scenario/check.sh
+rc=$?
+echo
+if [ "$rc" -eq 0 ]; then
+  echo "🎉 통과! (exit 로 나가거나 웹의 [채점] 버튼을 누르면 기록이 저장돼요)"
+else
+  echo "아직이에요. ✘ 항목을 다시 확인해 보세요. 막히면 hint"
+fi
+exit "$rc"
