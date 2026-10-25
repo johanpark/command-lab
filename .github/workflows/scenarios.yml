@@ -10,8 +10,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    env:
-      CMDLAB_HOME: ${{ runner.temp }}/cmdlab
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -25,3 +23,5 @@ jobs:
         run: node bin/lab.js build --all
       - name: 시나리오 검증
         run: node bin/lab.js test --verbose
+        env:
+          CMDLAB_HOME: ${{ runner.temp }}/cmdlab
