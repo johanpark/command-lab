@@ -1,0 +1,6 @@
+title: 첫 셸 스크립트 만들기
+category: shell
+level: 2
+minutes: 25
+tags: [셸 스크립트, "$1", if, exit 코드, date]
+summary: 인자를 받아 백업 파일을 만드는 스크립트를 작성하고, 잘못된 사용에는 알맞은 종료 코드를 돌려준다.

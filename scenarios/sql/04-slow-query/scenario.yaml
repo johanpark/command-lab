@@ -1,0 +1,6 @@
+title: 느린 쿼리 빠르게 만들기
+category: query
+level: 3
+minutes: 25
+tags: [EXPLAIN QUERY PLAN, CREATE INDEX, .timer, 인덱스]
+summary: 실행 계획으로 전체 스캔을 확인하고, 알맞은 인덱스를 만들어 쿼리가 인덱스를 쓰게 한다.

@@ -1,0 +1,6 @@
+title: vim 만 있는 서버
+category: basics
+level: 1
+minutes: 15
+tags: [vim, 입력 모드, ":wq", ":q!", dd]
+summary: nano 가 없는 서버에서 vim 으로 설정 파일을 고치고 저장해서 나온다.

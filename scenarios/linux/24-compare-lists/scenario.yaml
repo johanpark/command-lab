@@ -1,0 +1,6 @@
+title: 두 파일 비교하기
+category: text
+level: 2
+minutes: 20
+tags: [diff, sort -u, comm, uniq]
+summary: diff 로 설정 변경점을 찾고, sort 와 comm 으로 두 목록의 차집합을 구한다.
