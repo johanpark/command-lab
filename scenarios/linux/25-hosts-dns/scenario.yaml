@@ -1,0 +1,6 @@
+title: 엉뚱한 서버로 접속해요
+category: network
+level: 2
+minutes: 20
+tags: [/etc/hosts, getent, curl -v, 이름 풀이]
+summary: 도메인 이름이 엉뚱한 IP 로 풀리는 원인을 /etc/hosts 에서 찾아 고친다.

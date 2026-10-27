@@ -1,0 +1,6 @@
+title: 지웠는데 디스크가 안 비어요
+category: incident
+level: 3
+minutes: 25
+tags: [lsof +L1, /proc, 열린 파일, truncate]
+summary: 삭제됐지만 프로세스가 붙잡고 있는 로그 파일을 찾아, 서비스를 멈추지 않고 공간을 돌려받는다.

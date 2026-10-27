@@ -1,0 +1,6 @@
+title: 컨테이너 속 들여다보기
+category: basics
+level: 2
+minutes: 20
+tags: [docker exec, docker inspect, docker cp, docker port]
+summary: 문서가 없는 오래된 컨테이너의 설정·환경 변수·로그 파일을 exec, inspect, cp 로 조사한다.

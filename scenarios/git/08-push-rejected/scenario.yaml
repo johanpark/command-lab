@@ -1,0 +1,6 @@
+title: push 가 거절됐어요
+category: branch
+level: 2
+minutes: 20
+tags: [git push, git pull --rebase, git fetch, 원격 저장소]
+summary: 동료가 먼저 push 해서 내 push 가 거절될 때, 기록을 덮어쓰지 않고 rebase 로 합쳐서 올린다.

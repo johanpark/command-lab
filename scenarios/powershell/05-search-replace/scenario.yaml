@@ -1,0 +1,6 @@
+title: 설정 파일 검색·일괄 수정
+category: pipeline
+level: 2
+minutes: 20
+tags: [Select-String, -replace, Get-Content, Set-Content, 정규식]
+summary: Select-String 으로 여러 파일을 검색하고, -replace 로 내용을 일괄 수정한다. (같은 파일 읽고 쓰기의 함정 포함)
