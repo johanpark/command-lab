@@ -1,0 +1,6 @@
+title: 새 버전이 망가졌어요, 롤백!
+category: deploy
+level: 2
+minutes: 20
+tags: [심볼릭 링크, ln -sfn, readlink, diff -r, 롤백]
+summary: releases/current 심볼릭 링크 구조에서 직전 버전으로 빠르게 롤백하고, 망가진 버전의 차이를 찾는다.

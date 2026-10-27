@@ -1,0 +1,6 @@
+title: 윈도우에서 고친 배포 스크립트
+category: deploy
+level: 2
+minutes: 15
+tags: [CRLF, "\\r", cat -A, file, sed]
+summary: Windows 에서 편집돼 줄바꿈(CRLF)이 섞인 배포 스크립트를 찾아 고치고 배포를 완료한다.
