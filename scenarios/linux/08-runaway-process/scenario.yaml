@@ -1,5 +1,5 @@
 title: CPU를 잡아먹는 프로세스
-category: process
+category: incident
 level: 2
 minutes: 15
 tags: [ps, top, pgrep, kill, 프로세스]

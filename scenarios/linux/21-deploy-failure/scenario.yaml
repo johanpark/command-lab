@@ -1,0 +1,6 @@
+title: 배포가 실패했어요
+category: incident
+level: 3
+minutes: 30
+tags: [로그 분석, tail, 권한, 설정 오류, 재배포]
+summary: 배포 스크립트가 실패한 원인을 로그에서 하나씩 찾아 고치고, 서비스가 정상 응답할 때까지 재배포한다.

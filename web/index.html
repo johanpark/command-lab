@@ -29,12 +29,7 @@
           <input id="search" type="search" placeholder="제목, 명령어로 검색" autocomplete="off" aria-label="시나리오 검색">
           <kbd>/</kbd>
         </label>
-        <div class="filters" id="filters" role="group" aria-label="상태 필터">
-          <button data-filter="all" class="active">전체</button>
-          <button data-filter="todo">안 푼 문제</button>
-          <button data-filter="review">복습</button>
-          <button data-filter="done">통과</button>
-        </div>
+        <div class="env-tabs" id="env-tabs" role="tablist" aria-label="환경"></div>
       </div>
       <div class="docker-warning" id="docker-warning" hidden>
         <b>Docker에 연결할 수 없어요.</b><br>Docker Desktop을 실행한 뒤 새로고침하세요.

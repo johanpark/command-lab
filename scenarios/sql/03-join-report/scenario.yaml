@@ -1,0 +1,6 @@
+title: 테이블 합쳐서 분석하기
+category: query
+level: 3
+minutes: 30
+tags: [JOIN, LEFT JOIN, GROUP BY, SUM, 서브쿼리]
+summary: 주문·고객·상품 테이블을 JOIN 해서 VIP 고객, 휴면 고객, 효자 카테고리를 찾는다.

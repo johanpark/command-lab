@@ -119,6 +119,7 @@ hostname: lab
 # command: [sleep, infinity]      # 컨테이너 메인 프로세스 (서비스를 띄워야 하면 변경)
 
 icon: ☸️                           # 웹 화면에 보일 아이콘
+short: K8s                        # 왼쪽 환경 탭에 보일 짧은 이름
 categories:                       # 시나리오 묶음. 나열한 순서대로 보여준다
   - id: pods
     name: 파드 다루기

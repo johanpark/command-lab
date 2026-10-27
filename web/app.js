@@ -35,8 +35,9 @@ const state = {
   order: [], // 사이드바에 보이는 순서 (환경 → 카테고리 → 시나리오)
   current: null, // 보고 있는 시나리오 상세
   query: '',
-  filter: 'all',
-  collapsed: new Set(store.get('collapsed', [])),
+  env: store.get('env', null), // 사이드바에서 보고 있는 환경
+  onlyTodo: store.get('onlyTodo', false),
+  openCats: store.get('openCats', {}),
   results: {}, // 시나리오별 마지막 채점 결과 (이번 세션)
   debriefOpen: {},
   tab: 'task',
@@ -107,15 +108,7 @@ async function loadCatalog() {
   if (!state.current) renderHome();
 }
 
-function matches(s) {
-  const f = state.filter;
-  if (f === 'todo' && isDone(s)) return false;
-  if (f === 'review' && s.status.state !== 'review') return false;
-  if (f === 'done' && !isDone(s)) return false;
-  const q = state.query.trim().toLowerCase();
-  if (!q) return true;
-  return [s.title, s.id, s.summary, ...s.tags].join(' ').toLowerCase().includes(q);
-}
+const matchesQuery = (s, q) => [s.title, s.id, s.summary, ...s.tags].join(' ').toLowerCase().includes(q);
 
 function highlight(text) {
   const q = state.query.trim();
@@ -125,59 +118,104 @@ function highlight(text) {
   return `${esc(text.slice(0, i))}<mark>${esc(text.slice(i, i + q.length))}</mark>${esc(text.slice(i + q.length))}`;
 }
 
+// 카테고리 진행 상황: 시나리오마다 점 하나 (상태별 색)
+const statusDots = (items) =>
+  `<span class="dots" aria-label="${items.filter(isDone).length}/${items.length} 통과">${items
+    .map((s) => `<i class="${s.status.state}" title="${esc(s.title)}"></i>`)
+    .join('')}</span>`;
+
+// 펼쳐 둔 카테고리 (환경별). 처음엔 지금 보는 문제나 안 푼 문제가 있는 첫 카테고리만 연다
+function openCats(env) {
+  if (!state.openCats[env.id]) {
+    const groups = groupByCategory(env, state.catalog.scenarios.filter((s) => s.env === env.id));
+    const first = groups.find((g) => g.items.some((s) => !isDone(s))) ?? groups[0];
+    state.openCats[env.id] = first ? [first.cat.id] : [];
+  }
+  return new Set(state.openCats[env.id]);
+}
+function setCatOpen(envId, catId, open) {
+  const set = new Set(state.openCats[envId] ?? []);
+  if (open) set.add(catId);
+  else set.delete(catId);
+  state.openCats[envId] = [...set];
+  store.set('openCats', state.openCats);
+}
+
 function renderTree() {
   const { envs, scenarios, dockerOk } = state.catalog;
   $('#docker-warning').hidden = dockerOk;
-  const searching = Boolean(state.query.trim()) || state.filter !== 'all';
-  const html = envs
+  if (!envs.some((e) => e.id === state.env)) state.env = envs[0]?.id;
+
+  // 환경 탭
+  $('#env-tabs').innerHTML = envs
     .map((env) => {
       const all = scenarios.filter((s) => s.env === env.id);
-      const visible = all.filter(matches);
-      if (searching && !visible.length) return '';
-      const open = searching || !state.collapsed.has(env.id);
-      const groups = groupByCategory(env, visible)
-        .map(({ cat, items }) => {
-          const catAll = all.filter((s) => (catOf(env, s.category).id) === cat.id);
-          const n = catAll.filter(isDone).length;
-          return `<div class="cat">
-            <div class="cat-head" title="${esc(cat.description)}"><span>${cat.icon}</span><span>${esc(cat.name)}</span>
-              <span class="cat-count${n === catAll.length ? ' full' : ''}">${n}/${catAll.length}</span></div>
-            ${items.map(itemHtml).join('')}
-          </div>`;
-        })
-        .join('');
-      return `<section class="env${open ? ' open' : ''}">
-        <button class="env-head" data-env="${esc(env.id)}" aria-expanded="${open}" title="${esc(env.description)}">
-          <span class="env-icon">${env.icon}</span><span class="env-name">${esc(env.name)}</span>
-          <span class="env-count">${all.filter(isDone).length}/${all.length}</span><span class="chev">▾</span>
+      const n = all.filter(isDone).length;
+      const sel = env.id === state.env && !state.query.trim();
+      return `<button role="tab" class="env-tab${sel ? ' active' : ''}" data-env="${esc(env.id)}" aria-selected="${sel}" title="${esc(env.name)} · ${n}/${all.length} 통과">
+        <span class="env-tab-icon">${env.icon}</span>
+        <span class="env-tab-name">${esc(env.short ?? env.name)}</span>
+        <span class="env-tab-bar"><i style="width:${(n / (all.length || 1)) * 100}%"></i></span>
+      </button>`;
+    })
+    .join('');
+
+  const q = state.query.trim().toLowerCase();
+  if (q) {
+    // 검색: 모든 환경에서 찾아 평평한 목록으로
+    // 제목 > 태그(명령어) > 설명·ID 순으로 더 잘 맞는 것을 위에
+    const score = (s) =>
+      s.title.toLowerCase().includes(q) ? 0 : s.tags.some((t) => t.toLowerCase().includes(q)) ? 1 : 2;
+    const found = state.order.filter((s) => matchesQuery(s, q)).sort((a, b) => score(a) - score(b));
+    $('#tree').innerHTML = `<div class="tree-head"><span>검색 결과 <b>${found.length}</b>개</span></div>
+      ${found.length ? `<div class="search-list">${found.map((s) => itemHtml(s, true)).join('')}</div>` : '<p class="empty">일치하는 시나리오가 없어요.<br><span class="muted">명령어 이름(grep, chmod…)으로도 찾을 수 있어요.</span></p>'}`;
+    return;
+  }
+
+  const env = envOf(state.env);
+  const all = scenarios.filter((s) => s.env === env.id);
+  const open = openCats(env);
+  const groups = groupByCategory(env, all);
+  const body = groups
+    .map(({ cat, items }) => {
+      const shown = state.onlyTodo ? items.filter((s) => !isDone(s)) : items;
+      const isOpen = open.has(cat.id) || items.some((s) => s.id === state.current?.id);
+      const allDone = items.every(isDone);
+      return `<section class="cat${isOpen ? ' open' : ''}${allDone ? ' complete' : ''}">
+        <button class="cat-head" data-cat="${esc(cat.id)}" aria-expanded="${isOpen}" title="${esc(cat.description)}">
+          <span class="chev" aria-hidden="true">›</span>
+          <span class="cat-icon">${cat.icon}</span>
+          <span class="cat-name">${esc(cat.name)}</span>
+          ${statusDots(items)}
         </button>
-        ${progressBar(all)}
-        <div class="env-body">${groups}</div>
+        <div class="cat-body">${
+          shown.length
+            ? shown.map((s) => itemHtml(s)).join('')
+            : '<p class="cat-empty">✓ 모두 통과했어요</p>'
+        }</div>
       </section>`;
     })
     .join('');
-  $('#tree').innerHTML = html || '<p class="empty">조건에 맞는 시나리오가 없어요.</p>';
-  // 필터 버튼에 개수 표시
-  const counts = {
-    all: scenarios.length,
-    todo: scenarios.filter((s) => !isDone(s)).length,
-    review: scenarios.filter((s) => s.status.state === 'review').length,
-    done: scenarios.filter(isDone).length,
-  };
-  for (const b of $$('#filters button')) {
-    b.classList.toggle('active', b.dataset.filter === state.filter);
-    b.innerHTML = `${b.textContent.replace(/\s*\d+$/, '')}<span class="n">${counts[b.dataset.filter]}</span>`;
-  }
+  const done = all.filter(isDone).length;
+  $('#tree').innerHTML = `<div class="tree-head">
+      <span class="tree-title">${esc(env.name)} <span class="muted">${done}/${all.length}</span></span>
+      <button class="toggle${state.onlyTodo ? ' on' : ''}" id="only-todo" aria-pressed="${state.onlyTodo}" title="통과한 문제 숨기기">
+        <i></i>남은 문제만
+      </button>
+    </div>
+    <p class="env-desc">${esc(env.description)}</p>
+    ${body}`;
 }
 
-function itemHtml(s) {
+function itemHtml(s, withEnv = false) {
   const active = state.current?.id === s.id;
-  return `<a class="item${active ? ' active' : ''}" href="#${esc(s.id)}" ${active ? 'aria-current="page"' : ''}>
+  const env = withEnv ? envOf(s.env) : null;
+  return `<a class="item${active ? ' active' : ''}" href="#${esc(s.id)}" ${active ? 'aria-current="page"' : ''} title="${esc(s.title)} · ${LEVEL_NAME[s.level] ?? ''} · ${s.minutes}분">
     ${stateIcon(s.status.state)}
-    <span>
-      <span class="item-title">${highlight(s.title)}</span>
-      <span class="item-meta">${levelDots(s.level)} <span>${s.minutes}분</span>${s.running ? '<span class="running-dot">● 실행 중</span>' : ''}</span>
-    </span>
+    <span class="item-title">${highlight(s.title)}${
+      env ? `<span class="item-sub">${env.icon} ${esc(env.short ?? env.name)} › ${esc(catOf(env, s.category).name)}</span>` : ''
+    }</span>
+    ${s.running ? '<span class="live" title="실행 중"></span>' : ''}
   </a>`;
 }
 
@@ -191,14 +229,34 @@ function renderTopStats() {
     <span class="hide-sm">복습 대기 <b>${due}</b></span>`;
 }
 
+$('#env-tabs').addEventListener('click', (e) => {
+  const tab = e.target.closest('[data-env]');
+  if (!tab) return;
+  state.env = tab.dataset.env;
+  store.set('env', state.env);
+  if (state.query) {
+    state.query = '';
+    $('#search').value = '';
+  }
+  renderTree();
+  $('#tree').scrollTop = 0;
+});
+
 $('#tree').addEventListener('click', (e) => {
-  const head = e.target.closest('[data-env]');
+  const head = e.target.closest('[data-cat]');
   if (head) {
-    const id = head.dataset.env;
-    if (state.collapsed.has(id)) state.collapsed.delete(id);
-    else state.collapsed.add(id);
-    store.set('collapsed', [...state.collapsed]);
+    const sec = head.closest('.cat');
+    const open = !sec.classList.contains('open');
+    sec.classList.toggle('open', open);
+    head.setAttribute('aria-expanded', String(open));
+    setCatOpen(state.env, head.dataset.cat, open);
+    return;
+  }
+  if (e.target.closest('#only-todo')) {
+    state.onlyTodo = !state.onlyTodo;
+    store.set('onlyTodo', state.onlyTodo);
     renderTree();
+    return;
   }
   if (e.target.closest('.item')) closeSidebar();
 });
@@ -215,12 +273,6 @@ $('#search').addEventListener('keydown', (e) => {
     e.target.blur();
   }
   if (e.key === 'Enter') $('.tree .item')?.click();
-});
-$('#filters').addEventListener('click', (e) => {
-  const b = e.target.closest('[data-filter]');
-  if (!b) return;
-  state.filter = b.dataset.filter;
-  renderTree();
 });
 
 function openSidebar() {
@@ -309,11 +361,10 @@ function renderHome() {
             <ul class="cat-list">
               ${groupByCategory(env, all)
                 .map(({ cat, items }) => {
-                  const k = items.filter(isDone).length;
                   return `<li><button class="cat-row" data-cat="${esc(env.id)}:${esc(cat.id)}">
                     <span>${cat.icon}</span>
-                    <span>${esc(cat.name)}<span class="sub">${esc(cat.description)}</span>${progressBar(items)}</span>
-                    <span class="n">${k}/${items.length}</span>
+                    <span>${esc(cat.name)}<span class="sub">${esc(cat.description)}</span></span>
+                    ${statusDots(items)}
                   </button></li>`;
                 })
                 .join('')}
@@ -339,6 +390,7 @@ $('#home').addEventListener('click', (e) => {
   const [env, cat] = row.dataset.cat.split(':');
   const items = state.order.filter((s) => s.env === env && catOf(envOf(env), s.category).id === cat);
   const target = items.find((s) => !isDone(s)) ?? items[0];
+  setCatOpen(env, cat, true);
   if (target) location.hash = target.id;
 });
 
@@ -364,6 +416,10 @@ async function openScenario(id) {
     return;
   }
   state.current = detail;
+  if (state.env !== detail.env) {
+    state.env = detail.env;
+    store.set('env', state.env);
+  }
   document.title = `${detail.title} · Command Lab`;
   $('#home').hidden = true;
   $('#detail').hidden = false;

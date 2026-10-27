@@ -1,0 +1,6 @@
+title: SSH 키로 접속 준비하기
+category: network
+level: 2
+minutes: 20
+tags: [ssh-keygen, authorized_keys, 공개키, "chmod 700/600"]
+summary: SSH 키 쌍을 만들고, 공개키를 서버 계정에 올바른 권한으로 등록한다.

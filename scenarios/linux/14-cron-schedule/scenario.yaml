@@ -1,5 +1,5 @@
 title: 정해진 시간에 자동으로 실행하기
-category: process
+category: shell
 level: 2
 minutes: 20
 tags: [crontab, cron 표현식, 스케줄]

@@ -73,7 +73,7 @@ const routes = {
     return {
       dockerOk,
       current: progress.current,
-      envs: catalog.envs.map(({ id, name, description, icon, categories }) => ({ id, name, description, icon, categories })),
+      envs: catalog.envs.map(({ id, name, short, description, icon, categories }) => ({ id, name, short, description, icon, categories })),
       scenarios: catalog.scenarios.map((s) => {
         const { lastHistory, ...status } = scenarioStatus(progress, s.id);
         return {

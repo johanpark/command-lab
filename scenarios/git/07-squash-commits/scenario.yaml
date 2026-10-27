@@ -1,0 +1,6 @@
+title: 지저분한 커밋 정리하기
+category: branch
+level: 3
+minutes: 25
+tags: [git rebase -i, squash, git reset --soft, git log]
+summary: PR 을 올리기 전에 "wip", "오타 수정" 같은 커밋들을 의미 있는 커밋 하나로 합친다.
