@@ -64,6 +64,8 @@ function toast(msg, kind = 'info', ms = 3500) {
   const el = document.createElement('div');
   el.className = `toast ${kind}`;
   el.textContent = msg;
+  el.title = '눌러서 닫기';
+  el.addEventListener('click', () => el.remove());
   $('#toasts').appendChild(el);
   setTimeout(() => el.remove(), ms);
 }
@@ -278,10 +280,12 @@ $('#search').addEventListener('keydown', (e) => {
 function openSidebar() {
   $('#sidebar').classList.add('open');
   $('#scrim').hidden = false;
+  $('#menu-btn').setAttribute('aria-expanded', 'true');
 }
 function closeSidebar() {
   $('#sidebar').classList.remove('open');
   $('#scrim').hidden = true;
+  $('#menu-btn').setAttribute('aria-expanded', 'false');
 }
 $('#menu-btn').addEventListener('click', () => ($('#sidebar').classList.contains('open') ? closeSidebar() : openSidebar()));
 $('#scrim').addEventListener('click', closeSidebar);
@@ -803,6 +807,15 @@ function showOverlay({ icon = '▶', spin = false, msg, actions = [] }) {
 
 function showIdleOverlay(msg) {
   setConn('', '연결 안 됨');
+  // Docker 가 없으면 시작해도 실패하므로, 먼저 무엇이 필요한지 알려준다
+  if (!msg && state.catalog?.dockerOk === false) {
+    showOverlay({
+      icon: '⚠',
+      msg: 'Docker에 연결할 수 없어 실습을 시작할 수 없어요. Docker Desktop을 실행한 뒤 다시 확인해 주세요.',
+      actions: [{ label: '↻ 다시 확인', primary: true, onClick: () => location.reload() }],
+    });
+    return;
+  }
   showOverlay({
     icon: '▶',
     msg: msg ?? '시작하면 문제 상황이 담긴 실습 환경이 만들어지고, 여기에 터미널이 열려요.',
@@ -989,6 +1002,11 @@ document.addEventListener('keydown', (e) => {
   if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
     e.preventDefault();
     check();
+    return;
+  }
+  if (e.key === 'Escape' && $('#sidebar').classList.contains('open')) {
+    closeSidebar();
+    $('#menu-btn').focus();
     return;
   }
   if (typing) return; // 터미널(textarea)이나 검색창에 입력 중이면 아래 단축키는 쓰지 않는다
