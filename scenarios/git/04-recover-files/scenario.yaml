@@ -1,0 +1,5 @@
+title: 망가뜨린 파일 되살리기
+level: 2
+minutes: 20
+tags: [git restore, git log, git checkout, git diff]
+summary: 커밋 안 된 실수를 되돌리고, 예전 커밋에서 지운 파일을 기록에서 찾아 되살린다.

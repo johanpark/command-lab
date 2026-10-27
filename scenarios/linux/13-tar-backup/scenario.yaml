@@ -1,0 +1,5 @@
+title: 백업에서 파일 하나만 살리기
+level: 2
+minutes: 20
+tags: [tar, gzip, 압축, 백업, 복원]
+summary: tar 아카이브 내용을 확인하고, 필요한 파일만 꺼내고, 제외 조건을 걸어 새로 백업한다.

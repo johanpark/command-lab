@@ -1,0 +1,5 @@
+title: 설정 파일 일괄 수정하기
+level: 2
+minutes: 20
+tags: [grep -r, sed, sed -i, 정규식]
+summary: 여러 파일에 흩어진 값을 grep 으로 찾고 sed 로 한 번에 바꾼다.

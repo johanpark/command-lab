@@ -1,0 +1,5 @@
+title: command not found
+level: 2
+minutes: 15
+tags: [PATH, export, .bashrc, which]
+summary: 설치한 프로그램이 실행되지 않는 이유(PATH)를 이해하고 영구적으로 설정한다.

@@ -1,0 +1,5 @@
+title: 오래된 로그 정리하기
+level: 2
+minutes: 20
+tags: [Get-ChildItem -Recurse, Where-Object, LastWriteTime, Remove-Item, -WhatIf]
+summary: 날짜 조건으로 오래된 파일을 골라 개수를 세고, 미리보기(-WhatIf) 후 안전하게 지운다.

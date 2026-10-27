@@ -3,11 +3,12 @@ FROM ubuntu:24.04
 ENV DEBIAN_FRONTEND=noninteractive \
     LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \
-    TZ=Asia/Seoul
+    TZ=Asia/Seoul \
+    EDITOR=nano
 
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
-      bash-completion ca-certificates curl file gawk iproute2 iputils-ping jq less lsof \
+      bash-completion ca-certificates cron curl file gawk iproute2 iputils-ping jq less lsof \
       nano netcat-openbsd procps psmisc sudo tree tzdata unzip vim-tiny wget zip \
  && ln -fs "/usr/share/zoneinfo/$TZ" /etc/localtime \
  && rm -rf /var/lib/apt/lists/*

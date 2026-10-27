@@ -1,0 +1,5 @@
+title: 정해진 시간에 자동으로 실행하기
+level: 2
+minutes: 20
+tags: [crontab, cron 표현식, 스케줄]
+summary: crontab 으로 스크립트를 매일/평일/몇 분마다 자동 실행하도록 등록한다.
