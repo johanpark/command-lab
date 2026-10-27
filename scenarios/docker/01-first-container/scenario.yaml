@@ -1,0 +1,6 @@
+title: 첫 컨테이너 띄우기
+category: basics
+level: 1
+minutes: 20
+tags: [docker run, docker ps, "-p", "-d", docker logs, docker rm]
+summary: 이미지로 컨테이너를 백그라운드 실행하고 포트를 연결한 뒤, 안 쓰는 컨테이너를 정리한다.

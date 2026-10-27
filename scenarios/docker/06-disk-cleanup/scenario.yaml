@@ -1,0 +1,6 @@
+title: Docker 가 디스크를 다 먹었어요
+category: incident
+level: 3
+minutes: 25
+tags: [docker system df, prune, dangling 이미지, docker volume prune]
+summary: 쌓인 멈춘 컨테이너, 이름 없는 이미지, 안 쓰는 볼륨을 정리하되 서비스에 필요한 것은 지킨다.

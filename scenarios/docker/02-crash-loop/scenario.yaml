@@ -1,0 +1,6 @@
+title: 계속 재시작하는 컨테이너
+category: incident
+level: 2
+minutes: 25
+tags: [docker logs, Restarting, "-e", --env-file, --restart, docker inspect]
+summary: 재시작을 반복하는 컨테이너의 원인을 로그에서 찾고, 환경 변수 설정을 고쳐 다시 띄운다.

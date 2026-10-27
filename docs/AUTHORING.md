@@ -131,6 +131,16 @@ categories:                       # 시나리오 묶음. 나열한 순서대로 
     description: 스케일, 업데이트, 되돌리기
 ```
 
+컨테이너 자원과 권한도 환경별로 바꿀 수 있어요 (Docker 환경 예시):
+```yaml
+privileged: true                  # 컨테이너 안에서 dockerd 를 돌려야 할 때만
+volumes: [/var/lib/docker]        # 익명 볼륨 (실습 종료 시 함께 삭제)
+memory: 1536                      # MB (기본 768)
+cpus: 2                           # 기본 1
+command: [sh, -c, "dockerd > /var/log/dockerd.log 2>&1 & exec sleep infinity"]
+```
+Docker 환경의 시나리오는 `setup.sh` 에서 `source /usr/local/lib/lab-docker.sh` 후 `wait_docker`, `ensure_busybox`, `build_image 태그 [폴더] <<'EOF' ... EOF` 를 쓸 수 있어요.
+
 `history` 는 목록으로 여러 개를 줄 수도 있어요 (예: SQL 환경은 bash 기록과 sqlite3 셸 기록을 함께 모음).
 
 `env.yaml` 은 이미지 빌드에 쓰이지 않으므로, 이름·설명·카테고리를 바꿔도 이미지를 다시 빌드하지 않습니다.

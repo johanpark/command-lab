@@ -1,0 +1,6 @@
+title: 업그레이드해도 데이터 지키기
+category: network
+level: 2
+minutes: 25
+tags: [docker volume, "-v", docker cp, 데이터 보존]
+summary: 컨테이너를 지우면 사라지는 데이터를 볼륨으로 옮기고, 새 버전 이미지로 안전하게 교체한다.

@@ -1,0 +1,6 @@
+title: Dockerfile 직접 써서 배포하기
+category: build
+level: 2
+minutes: 25
+tags: [Dockerfile, FROM, COPY, CMD, docker build, 태그]
+summary: 정적 웹사이트를 담는 Dockerfile 을 작성하고 이미지로 빌드해서 컨테이너로 띄운다.

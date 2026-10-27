@@ -192,7 +192,7 @@ a.btn.primary { color: var(--accent-ink); }
 .search input::-webkit-search-cancel-button { cursor: pointer; }
 
 /* 환경 탭 */
-.env-tabs { display: grid; grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); gap: 4px; }
+.env-tabs { display: grid; grid-template-columns: repeat(auto-fit, minmax(48px, 1fr)); gap: 3px; }
 .env-tab {
   display: grid;
   justify-items: center;

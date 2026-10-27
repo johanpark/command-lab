@@ -131,7 +131,7 @@ export async function findContainer(name) {
 
 export async function removeContainer(name) {
   const found = await findContainer(name);
-  if (found) await found.container.remove({ force: true });
+  if (found) await found.container.remove({ force: true, v: true });
   return Boolean(found);
 }
 
@@ -166,11 +166,15 @@ export async function createLabContainer({ scenario, env }) {
     WorkingDir: env.workdir,
     Env: ['LANG=C.UTF-8', 'LC_ALL=C.UTF-8', 'TERM=xterm-256color'],
     Labels: { cmdlab: '1', 'cmdlab.scenario': scenario.id, 'cmdlab.env': env.id },
+    // 익명 볼륨 (예: Docker-in-Docker 의 /var/lib/docker). 컨테이너를 지울 때 함께 지운다
+    Volumes: Object.fromEntries((env.volumes ?? []).map((v) => [v, {}])),
     HostConfig: {
       Init: true,
-      Memory: 768 * 1024 * 1024,
-      NanoCpus: 1_000_000_000,
-      PidsLimit: 512,
+      Memory: (env.memory ?? 768) * 1024 * 1024,
+      NanoCpus: (env.cpus ?? 1) * 1_000_000_000,
+      PidsLimit: env.pids ?? 512,
+      // 컨테이너 안에서 dockerd 를 돌려야 하는 환경(docker)만 켠다
+      Privileged: Boolean(env.privileged),
     },
   });
   await container.start();

@@ -1,0 +1,6 @@
+title: docker compose 로 한 번에 띄우기
+category: build
+level: 3
+minutes: 25
+tags: [docker compose, compose.yaml, ports, docker compose logs]
+summary: 잘못된 compose.yaml 을 에러 메시지와 로그를 보며 고치고, 여러 컨테이너를 한 번에 띄운다.

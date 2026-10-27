@@ -68,7 +68,7 @@ lab web --open            # http://localhost:4000
 
 왼쪽에서 시나리오를 고르고 **▶ 시작**을 누르면 오른쪽에 터미널이 열립니다. 문제, 힌트, 채점 결과, 해설, 내가 입력한 명령어가 한 화면에 보입니다. CLI와 웹은 같은 실습 컨테이너와 같은 기록을 공유해서, 섞어 써도 됩니다.
 
-## 지금 있는 시나리오 (36개)
+## 지금 있는 시나리오 (43개)
 
 각 환경 안에서 카테고리별로 묶여 있어요. 웹 화면 왼쪽 목록과 `lab list` 가 같은 순서로 보여줍니다.
 
@@ -84,10 +84,20 @@ lab web --open            # http://localhost:4000
 | 🌿 **Git** | 🌱 Git 시작하기 | 첫 커밋 만들기 |
 | | ⏪ 기록과 되돌리기 | 비밀번호를 커밋해 버렸다 · 망가뜨린 파일 되살리기 · 버그를 만든 커밋 찾아 되돌리기 |
 | | 🔀 브랜치와 협업 | 머지 충돌 해결하기 · 작업 중에 긴급 버그 수정(stash) · 지저분한 커밋 정리하기(rebase -i) |
+| 🐳 **Docker** | 📦 컨테이너 기본 | 첫 컨테이너 띄우기 |
+| | 🏗️ 이미지와 Compose | Dockerfile 직접 써서 배포하기 · docker compose 로 한 번에 띄우기 |
+| | 🔗 네트워크와 볼륨 | 컨테이너끼리 연결이 안 돼요 · 업그레이드해도 데이터 지키기 |
+| | 🚨 장애 대응·정리 | 계속 재시작하는 컨테이너 · Docker 가 디스크를 다 먹었어요 |
 | ⚡ **PowerShell** | 🚀 시작하기 · 🔗 객체 파이프라인 · 🛠️ 관리 작업 | PowerShell 첫걸음 · 객체 파이프라인으로 매출 분석 · 오래된 로그 정리하기 · 프로세스 살펴보고 정리하기 |
 | 🗄️ **SQL (sqlite3)** | 🔎 조회하기 · ✏️ 데이터 고치기 | 쇼핑몰 DB 첫 조회 · 테이블 합쳐서 분석하기(JOIN) · 데이터 안전하게 고치기 |
 
 `ls`, `cd` 정도만 아는 상태라면 Linux 의 📁 파일과 폴더부터 순서대로 진행하세요. 🚨 장애 대응은 앞의 카테고리를 어느 정도 익힌 뒤 도전하는 실전 문제예요.
+
+### Docker 환경에 대해
+
+- 실습 컨테이너 **안에서 별도의 Docker 엔진**이 돌아가요(Docker-in-Docker). 실습 중에 만들고 지우는 컨테이너·이미지·볼륨은 **내 PC 의 Docker 와 완전히 분리**돼 있어서 마음껏 지워도 됩니다.
+- 이를 위해 Docker 환경의 실습 컨테이너만 **privileged 모드**로 실행해요. 내 PC 에서만 쓰는 연습용이라 괜찮지만, 공용 서버에 띄워 여러 사람이 쓰는 용도로는 쓰지 마세요.
+- 인터넷 없이도 되도록 `busybox` 이미지를 컨테이너 안에서 직접 만들어 둡니다. 그래서 `docker pull` 로 Docker Hub 이미지를 받는 대신, 준비된 이미지(`shop-web:1.0` 등)와 `busybox` 를 씁니다.
 
 ## 웹 화면 사용 팁
 
@@ -134,5 +144,5 @@ lab check ──▶ check.sh (root: 결과 상태 검사, ✔/✘ 출력, 종료
 
 - **"Docker에 연결할 수 없습니다"**: Docker Desktop이 실행 중인지 확인하세요. 다른 런타임(colima, OrbStack 등)은 `DOCKER_HOST` 환경변수로 지정할 수 있습니다.
 - **이미지 빌드가 실패해요**: 네트워크 문제일 수 있습니다. `lab build <환경> --no-cache` 로 다시 시도하세요.
-- **실습 컨테이너 정리**: `lab stop --all`. 이미지까지 지우려면 `docker image rm cmdlab-env-linux cmdlab-env-git cmdlab-env-powershell cmdlab-env-sql`.
+- **실습 컨테이너 정리**: `lab stop --all`. 이미지까지 지우려면 `docker image rm cmdlab-env-linux cmdlab-env-git cmdlab-env-docker cmdlab-env-powershell cmdlab-env-sql`.
 - **기록 초기화**: `~/.cmdlab/progress.json` 삭제. 기록 위치는 `CMDLAB_HOME` 환경변수로 바꿀 수 있습니다.
