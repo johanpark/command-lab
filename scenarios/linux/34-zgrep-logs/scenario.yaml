@@ -1,0 +1,6 @@
+title: 압축된 옛 로그에서 찾기
+category: text
+level: 2
+minutes: 20
+tags: [zgrep, zcat, grep -B, grep -C, 로그 순환]
+summary: 순환·압축된 로그(.gz)까지 뒤져서 특정 주문의 에러와 그 앞뒤 문맥을 찾는다.

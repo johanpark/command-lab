@@ -1,0 +1,6 @@
+title: 보안 패치 하나만 옮기기
+category: branch
+level: 2
+minutes: 20
+tags: [git cherry-pick, 릴리스 브랜치, git log --oneline]
+summary: 개발 중인 main 에서 보안 수정 커밋 하나만 골라 운영 중인 릴리스 브랜치에 적용한다.

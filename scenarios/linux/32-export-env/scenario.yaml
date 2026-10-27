@@ -1,0 +1,6 @@
+title: 앱이 환경 변수를 못 읽어요
+category: shell
+level: 2
+minutes: 20
+tags: [export, 환경 변수, "VAR=값 명령", set -a, source]
+summary: 셸 변수와 환경 변수의 차이를 이해하고, .env 파일의 값을 앱에 넘겨 실행한다.

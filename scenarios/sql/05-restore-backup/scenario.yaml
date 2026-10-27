@@ -1,0 +1,6 @@
+title: 실수로 지운 데이터 복구
+category: modify
+level: 3
+minutes: 30
+tags: [ATTACH DATABASE, INSERT ... SELECT, NOT IN, .backup, 복구]
+summary: 백업 DB 를 붙여서 지워진 행만 골라 되살리고, 백업 이후의 변경 사항은 지킨다.
