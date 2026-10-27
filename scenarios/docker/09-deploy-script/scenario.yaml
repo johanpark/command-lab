@@ -1,0 +1,6 @@
+title: 배포 스크립트가 두 번째부터 실패해요
+category: incident
+level: 2
+minutes: 25
+tags: [docker run, 이름 충돌, docker rm -f, "|| true", 멱등성]
+summary: 처음 한 번만 동작하는 컨테이너 배포 스크립트를, 몇 번을 실행해도 같은 결과가 나오게 고친다.

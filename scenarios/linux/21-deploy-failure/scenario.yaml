@@ -1,5 +1,5 @@
 title: 배포가 실패했어요
-category: incident
+category: deploy
 level: 3
 minutes: 30
 tags: [로그 분석, tail, 권한, 설정 오류, 재배포]

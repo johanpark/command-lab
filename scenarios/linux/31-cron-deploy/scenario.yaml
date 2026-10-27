@@ -1,0 +1,6 @@
+title: 손으로는 되는데 cron 에선 실패해요
+category: deploy
+level: 3
+minutes: 25
+tags: [cron, 상대 경로, "$(dirname \"$0\")", PATH, env -i]
+summary: 상대 경로와 PATH 에 기대는 배포 스크립트를 어디서, 어떤 환경에서 실행해도 동작하게 고친다.

@@ -1,0 +1,6 @@
+title: 실패했는데 "배포 성공"이래요
+category: deploy
+level: 3
+minutes: 25
+tags: [set -e, set -u, pipefail, "$?", bash -x]
+summary: 중간 단계가 실패해도 성공이라고 출력하는 배포 스크립트를 실패에 엄격하게 고치고, 진짜 원인을 찾아 배포한다.
