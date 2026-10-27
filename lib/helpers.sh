@@ -59,6 +59,23 @@ expect_answer() {
   if [ "$got" = "$expected" ]; then pass "$msg"; else fail "$msg (지금 적힌 값: '${got}')"; fi
 }
 
+# sqlite3 등이 출력한 표(box/column/list, 머리글 포함)를 그대로 저장한 답안에서
+# 마지막 값 한 칸만 꺼낸다. 예: "│ 12 │" → 12
+cell_answer() {
+  local f="${1:-$H/answer.txt}"
+  [ -f "$f" ] || return 1
+  tr -d '\r' < "$f" | sed 's/[│┃|]/ /g' | grep -vE '^[[:space:]─━┌┐└┘├┤┬┴┼+=-]*$' | tail -n 1 \
+    | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'
+}
+
+# expect_cell "설명" "기대값" [답안파일]
+expect_cell() {
+  local msg=$1 expected=$2 file=${3:-$H/answer.txt} got
+  if [ ! -f "$file" ]; then fail "$msg (답안 파일 $(pretty_path "$file") 이 없어요)"; return; fi
+  got=$(cell_answer "$file")
+  if [ "$got" = "$expected" ]; then pass "$msg"; else fail "$msg (지금 적힌 값: '${got}')"; fi
+}
+
 # /home/learner/x → ~/x 로 보기 좋게
 pretty_path() { if [[ $1 == "$H"/* ]]; then echo "~${1#"$H"}"; else echo "$1"; fi; }
 

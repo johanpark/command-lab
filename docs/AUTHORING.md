@@ -29,7 +29,8 @@ scenarios/linux/10-my-scenario/
 
 ```yaml
 title: 디스크가 꽉 찼어요         # 목록에 보일 제목
-level: 3                          # 난이도 1~3
+category: storage                 # env.yaml 의 categories 중 하나의 id
+level: 3                          # 난이도 1~3 (입문/기초/실전)
 minutes: 20                       # 예상 소요 시간
 tags: [du, find, sort]            # 다루는 명령어
 summary: 한 줄 설명
@@ -59,6 +60,7 @@ summary: 한 줄 설명
 | `expect "설명" 명령...` | 명령이 성공하면 pass, 아니면 fail |
 | `expect_answer "설명" 기대값 [파일]` | `~/answer.txt`(기본) 내용 비교. 앞뒤 공백/빈 줄/CRLF 무시 |
 | `answer [파일]` | 답안 파일 내용 (정리된 값) |
+| `expect_cell "설명" 기대값 [파일]` | sqlite3 처럼 표(머리글, 테두리 포함)로 저장된 답안에서 마지막 값 한 칸을 비교 |
 | `finish` | 하나라도 fail 이면 종료코드 1 |
 
 ### 좋은 시나리오의 조건
@@ -115,7 +117,22 @@ workdir: /home/learner
 history: /home/learner/.bash_history   # 채점 후 "내가 입력한 명령어"로 보여줄 파일
 hostname: lab
 # command: [sleep, infinity]      # 컨테이너 메인 프로세스 (서비스를 띄워야 하면 변경)
+
+icon: ☸️                           # 웹 화면에 보일 아이콘
+categories:                       # 시나리오 묶음. 나열한 순서대로 보여준다
+  - id: pods
+    name: 파드 다루기
+    icon: 📦
+    description: 상태 확인, 로그, 재시작
+  - id: deploy
+    name: 배포와 롤백
+    icon: 🚀
+    description: 스케일, 업데이트, 되돌리기
 ```
+
+`history` 는 목록으로 여러 개를 줄 수도 있어요 (예: SQL 환경은 bash 기록과 sqlite3 셸 기록을 함께 모음).
+
+`env.yaml` 은 이미지 빌드에 쓰이지 않으므로, 이름·설명·카테고리를 바꿔도 이미지를 다시 빌드하지 않습니다.
 
 ### Dockerfile 규칙
 
@@ -134,7 +151,7 @@ hostname: lab
 
 | 환경 | 연습할 수 있는 상황 |
 |---|---|
-| `sql` (sqlite3/psql) | 느린 쿼리 찾기, 잘못 들어간 데이터 고치기, 백업/복원 |
+| `sql` 확장 (JOIN, 인덱스) | 느린 쿼리 찾기, 테이블 합치기, 백업/복원 |
 | `docker` (Docker-in-Docker) | 죽은 컨테이너 로그 보기, 포트 충돌, 이미지 정리 |
 | `kubectl` (kind/k3s) | CrashLoopBackOff 원인 찾기, 스케일, 롤백 |
 | `network` | `curl`, `dig`, `ss` 로 연결 문제 진단 |

@@ -27,7 +27,7 @@ function labEnvVars(scenario, env) {
     `LEARNER_HOME=${env.home ?? `/home/${env.user}`}`,
     `SCENARIO_ID=${scenario.id}`,
     `SCENARIO_TITLE=${scenario.title}`,
-    `HISTORY_FILE=${env.history}`,
+    `HISTORY_FILE=${[env.history ?? []].flat().join(':')}`,
   ];
 }
 
@@ -79,10 +79,15 @@ export function parseHistory(text) {
   return items;
 }
 
+// env.history 는 파일 하나 또는 여러 개(bash + sqlite3 처럼 셸 안의 셸)일 수 있다.
 async function readHistory(container, env) {
-  if (!env.history) return [];
-  const res = await execCapture(container, ['cat', env.history], { user: env.user });
-  return res.exitCode === 0 ? parseHistory(res.stdout) : [];
+  const files = [env.history ?? []].flat();
+  const all = [];
+  for (const file of files) {
+    const res = await execCapture(container, ['cat', file], { user: env.user });
+    if (res.exitCode === 0) all.push(...parseHistory(res.stdout));
+  }
+  return all;
 }
 
 function runCheck(container, scenario, env) {

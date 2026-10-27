@@ -138,12 +138,20 @@ async function cmdList(catalog, envFilter) {
     if (envFilter && env.id !== envFilter) continue;
     const list = catalog.scenarios.filter((s) => s.env === env.id);
     if (!list.length) continue;
-    console.log(`\n${c.bold(c.cyan(env.name))} ${c.dim(`(${env.id})`)}`);
-    for (const s of list) {
-      const st = scenarioStatus(progress, s.id);
-      const lv = '★'.repeat(s.level) + '☆'.repeat(Math.max(0, 3 - s.level));
-      const run = running.includes(s.id) ? c.green(' [실행 중]') : '';
-      console.log(`  ${STATE_LABEL[st.state]}${s.id.padEnd(28)} ${c.yellow(lv)}  ${s.title}${run}`);
+    const done = list.filter((s) => ['done', 'review'].includes(scenarioStatus(progress, s.id).state)).length;
+    console.log(`\n${c.bold(c.cyan(env.name))} ${c.dim(`(${env.id}) ${done}/${list.length}`)}`);
+    // 환경에 정의된 카테고리 순서대로 묶어서 보여준다
+    const cats = [...env.categories, { id: 'etc', name: '기타' }];
+    for (const cat of cats) {
+      const items = list.filter((s) => (env.categories.some((x) => x.id === s.category) ? s.category : 'etc') === cat.id);
+      if (!items.length) continue;
+      console.log(`  ${c.bold(cat.name)}`);
+      for (const s of items) {
+        const st = scenarioStatus(progress, s.id);
+        const lv = '★'.repeat(s.level) + '☆'.repeat(Math.max(0, 3 - s.level));
+        const run = running.includes(s.id) ? c.green(' [실행 중]') : '';
+        console.log(`    ${STATE_LABEL[st.state]}${s.id.padEnd(28)} ${c.yellow(lv)}  ${s.title}${run}`);
+      }
     }
   }
   console.log(c.dim(`\n  ${STATE_LABEL.done}통과  ${STATE_LABEL.review}복습할 때  ${STATE_LABEL.tried}시도함  ${STATE_LABEL.new}새 문제\n`));

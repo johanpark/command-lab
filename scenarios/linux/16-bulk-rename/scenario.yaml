@@ -1,0 +1,6 @@
+title: 사진 파일 이름 한꺼번에 바꾸기
+category: shell
+level: 2
+minutes: 20
+tags: [for 반복문, 변수, "${f%.JPG}", 따옴표]
+summary: for 반복문과 변수 치환으로 수십 개 파일의 이름을 규칙에 맞게 바꾼다.

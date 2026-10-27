@@ -1,4 +1,5 @@
 title: 머지 충돌 해결하기
+category: branch
 level: 2
 minutes: 20
 tags: [git branch, git merge, 충돌, git diff]

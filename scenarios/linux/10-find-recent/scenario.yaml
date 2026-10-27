@@ -1,4 +1,5 @@
 title: 어제 누가 설정을 바꿨지?
+category: storage
 level: 2
 minutes: 20
 tags: [find, -mtime, -name, -empty, -delete]

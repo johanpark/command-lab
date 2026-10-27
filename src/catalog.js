@@ -54,6 +54,9 @@ export function loadEnvs() {
       id: name,
       name: meta.name ?? name,
       description: meta.description ?? '',
+      icon: meta.icon ?? '💻',
+      // 시나리오를 묶어 보여줄 카테고리 (scenario.yaml 의 category 값과 연결)
+      categories: (meta.categories ?? []).map((c) => ({ icon: '📌', description: '', ...c })),
       dir,
       image: `cmdlab-env-${name}:latest`,
     });
@@ -76,6 +79,7 @@ export function loadScenarios() {
         env: meta.env ?? group,
         level: meta.level ?? 1,
         minutes: meta.minutes ?? 10,
+        category: meta.category ?? 'etc',
         tags: meta.tags ?? [],
         summary: meta.summary ?? '',
         dir,
@@ -135,7 +139,6 @@ export function findScenario(scenarios, query) {
 export function validateCatalog() {
   const { envs, scenarios } = loadCatalog();
   const problems = [...loadErrors];
-  const envIds = new Set(envs.map((e) => e.id));
   for (const env of envs) {
     if (!fs.existsSync(path.join(env.dir, 'Dockerfile'))) {
       problems.push(`env ${env.id}: Dockerfile이 없습니다.`);
@@ -143,7 +146,11 @@ export function validateCatalog() {
     if (!Array.isArray(env.shell)) problems.push(`env ${env.id}: shell은 배열이어야 합니다.`);
   }
   for (const s of scenarios) {
-    if (!envIds.has(s.env)) problems.push(`${s.id}: 존재하지 않는 env '${s.env}'`);
+    const env = envs.find((e) => e.id === s.env);
+    if (!env) problems.push(`${s.id}: 존재하지 않는 env '${s.env}'`);
+    else if (env.categories.length && !env.categories.some((c) => c.id === s.category)) {
+      problems.push(`${s.id}: env '${s.env}' 에 없는 category '${s.category}'`);
+    }
     for (const f of ['task.md', 'setup.sh', 'check.sh']) {
       if (!fs.existsSync(path.join(s.dir, f))) problems.push(`${s.id}: ${f} 파일이 없습니다.`);
     }

@@ -1,4 +1,5 @@
 title: command not found
+category: shell
 level: 2
 minutes: 15
 tags: [PATH, export, .bashrc, which]

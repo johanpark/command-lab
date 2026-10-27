@@ -1,0 +1,6 @@
+title: 데이터 안전하게 고치기
+category: modify
+level: 2
+minutes: 25
+tags: [UPDATE, DELETE, WHERE, REPLACE, 트랜잭션]
+summary: UPDATE/DELETE 를 WHERE 로 정확히 좁히고, 트랜잭션으로 안전하게 수정한다.

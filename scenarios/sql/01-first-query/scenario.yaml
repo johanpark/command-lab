@@ -1,0 +1,6 @@
+title: 쇼핑몰 DB 첫 조회
+category: query
+level: 1
+minutes: 20
+tags: [sqlite3, SELECT, WHERE, COUNT, ORDER BY, LIMIT]
+summary: 터미널에서 sqlite3 로 DB 를 열고, 조건과 정렬로 원하는 값을 찾는다.

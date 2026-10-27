@@ -1,4 +1,5 @@
 title: PowerShell 첫걸음
+category: basics
 level: 1
 minutes: 15
 tags: [Get-ChildItem, Set-Location, Get-Content, Copy-Item, New-Item]

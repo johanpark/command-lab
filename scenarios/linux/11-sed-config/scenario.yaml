@@ -1,4 +1,5 @@
 title: 설정 파일 일괄 수정하기
+category: text
 level: 2
 minutes: 20
 tags: [grep -r, sed, sed -i, 정규식]

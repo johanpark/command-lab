@@ -1,4 +1,5 @@
 title: 포트가 이미 사용 중입니다
+category: network
 level: 3
 minutes: 20
 tags: [ss, lsof, kill, 포트, 백그라운드 실행]

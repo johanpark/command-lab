@@ -1,4 +1,5 @@
 title: 객체 파이프라인으로 매출 분석
+category: pipeline
 level: 2
 minutes: 20
 tags: [Import-Csv, Where-Object, Group-Object, Measure-Object, Export-Csv]

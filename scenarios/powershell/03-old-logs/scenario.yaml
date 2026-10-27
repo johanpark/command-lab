@@ -1,4 +1,5 @@
 title: 오래된 로그 정리하기
+category: admin
 level: 2
 minutes: 20
 tags: [Get-ChildItem -Recurse, Where-Object, LastWriteTime, Remove-Item, -WhatIf]

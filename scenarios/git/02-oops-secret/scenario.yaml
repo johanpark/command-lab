@@ -1,4 +1,5 @@
 title: 비밀번호를 커밋해 버렸다
+category: undo
 level: 2
 minutes: 20
 tags: [git rm --cached, git commit --amend, .gitignore, git reset]

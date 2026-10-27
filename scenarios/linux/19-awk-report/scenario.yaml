@@ -1,0 +1,6 @@
+title: 매출 리포트 만들기
+category: text
+level: 3
+minutes: 25
+tags: [awk, 연관 배열, sort -k, CSV]
+summary: awk 로 CSV 를 집계해서 카테고리별 매출 리포트를 만든다.

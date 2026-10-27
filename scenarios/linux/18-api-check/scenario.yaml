@@ -1,0 +1,6 @@
+title: API 서버 상태 점검
+category: network
+level: 2
+minutes: 20
+tags: [curl, HTTP 상태 코드, jq, JSON]
+summary: curl 로 API 응답 코드를 확인하고, jq 로 JSON 에서 필요한 값만 뽑는다.

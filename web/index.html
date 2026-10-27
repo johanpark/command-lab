@@ -4,81 +4,150 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Command Lab</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2310141b'/%3E%3Cpath d='M8 11l6 5-6 5' stroke='%235b8cff' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M16 22h8' stroke='%23e3e8ef' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="/vendor/xterm.css">
   <link rel="stylesheet" href="/style.css">
+  <script>
+    // 테마를 그리기 전에 적용해서 깜빡임을 막는다
+    try { const t = localStorage.getItem('cmdlab.theme'); if (t) document.documentElement.dataset.theme = t; } catch {}
+  </script>
 </head>
 <body>
   <header class="topbar">
-    <button class="icon-btn menu-btn" id="menu-btn" aria-label="시나리오 목록 열기">☰</button>
-    <a class="brand" href="#">command<span>-lab</span></a>
-    <div class="summary" id="summary"></div>
+    <button class="icon-btn menu-btn" id="menu-btn" aria-label="시나리오 목록 열기" aria-controls="sidebar">☰</button>
+    <a class="brand" href="#" aria-label="홈으로"><span class="brand-prompt">$</span> command<span>-lab</span></a>
+    <div class="top-stats" id="top-stats" aria-live="polite"></div>
+    <button class="icon-btn" id="theme-btn" aria-label="테마 바꾸기" title="테마 (시스템 / 라이트 / 다크)">🌓</button>
+    <button class="icon-btn" id="help-btn" aria-label="단축키 도움말" title="단축키 (?)">?</button>
   </header>
 
   <div class="layout">
     <aside class="sidebar" id="sidebar">
+      <div class="side-top">
+        <label class="search">
+          <span aria-hidden="true">⌕</span>
+          <input id="search" type="search" placeholder="제목, 명령어로 검색" autocomplete="off" aria-label="시나리오 검색">
+          <kbd>/</kbd>
+        </label>
+        <div class="filters" id="filters" role="group" aria-label="상태 필터">
+          <button data-filter="all" class="active">전체</button>
+          <button data-filter="todo">안 푼 문제</button>
+          <button data-filter="review">복습</button>
+          <button data-filter="done">통과</button>
+        </div>
+      </div>
       <div class="docker-warning" id="docker-warning" hidden>
-        Docker에 연결할 수 없어요. Docker Desktop을 실행한 뒤 새로고침하세요.
+        <b>Docker에 연결할 수 없어요.</b><br>Docker Desktop을 실행한 뒤 새로고침하세요.
       </div>
-      <nav id="scenario-list" aria-label="시나리오 목록"></nav>
-      <div class="legend">
-        <span><i class="dot done"></i>통과</span>
-        <span><i class="dot review"></i>복습</span>
-        <span><i class="dot tried"></i>시도</span>
-        <span><i class="dot new"></i>새 문제</span>
-      </div>
+      <nav class="tree" id="tree" aria-label="시나리오 목록"></nav>
     </aside>
+    <div class="scrim" id="scrim" hidden></div>
 
     <main class="main">
-      <section class="welcome" id="welcome">
-        <h1>상황 속에서 명령어를 익히는 실습장</h1>
-        <p>왼쪽에서 시나리오를 고르세요. 진짜 리눅스 컨테이너가 만들어지고, 문제 상황을 직접 해결하면 자동으로 채점됩니다.</p>
-        <ol>
-          <li><b>시작</b>: 문제 상황이 담긴 실습 환경이 만들어져요.</li>
-          <li><b>실습</b>: 오른쪽 터미널에 직접 명령어를 입력해요. 막히면 <b>힌트</b>를 보세요.</li>
-          <li><b>채점</b>: 결과 상태를 검사해요. 정답 명령어는 하나가 아니에요.</li>
-          <li><b>복습</b>: 통과한 문제는 1일 → 3일 → 7일… 간격으로 다시 풀어요.</li>
-        </ol>
-        <div class="next-up" id="next-up"></div>
-      </section>
+      <!-- 홈 -->
+      <section class="home" id="home"></section>
 
+      <!-- 실습 화면 -->
       <section class="detail" id="detail" hidden>
-        <div class="toolbar">
-          <div class="title-wrap">
+        <div class="detail-head">
+          <div class="head-main">
             <div class="crumbs" id="d-crumbs"></div>
-            <h2 id="d-title"></h2>
+            <h1 id="d-title"></h1>
+            <div class="meta" id="d-meta"></div>
           </div>
-          <div class="actions">
-            <button class="btn primary" id="btn-start">▶ 시작</button>
-            <button class="btn" id="btn-check" disabled>✓ 채점</button>
-            <button class="btn" id="btn-hint">💡 힌트</button>
-            <button class="btn" id="btn-debrief">📖 해설</button>
-            <button class="btn ghost" id="btn-stop" disabled>■ 종료</button>
+          <div class="head-actions">
+            <div class="actions" id="actions"></div>
+            <div class="pager">
+              <button class="icon-btn" id="prev-btn" aria-label="이전 시나리오" title="이전 시나리오">‹</button>
+              <button class="icon-btn" id="next-btn" aria-label="다음 시나리오" title="다음 시나리오">›</button>
+            </div>
           </div>
         </div>
 
-        <div class="split">
-          <div class="panel task-panel">
-            <div class="result" id="result" hidden></div>
-            <article class="markdown" id="task"></article>
-            <div id="hints"></div>
-            <div class="history" id="history" hidden></div>
-            <article class="markdown debrief" id="debrief" hidden></article>
-          </div>
+        <div class="workspace" id="workspace">
+          <section class="pane side-pane" id="side-pane">
+            <div class="tabs" role="tablist" id="tabs">
+              <button role="tab" data-tab="task" aria-selected="true">문제</button>
+              <button role="tab" data-tab="hints">힌트 <span class="badge" id="hint-badge"></span></button>
+              <button role="tab" data-tab="debrief">해설 <span id="debrief-lock">🔒</span></button>
+              <button role="tab" data-tab="history">기록</button>
+            </div>
+            <div class="pane-body" id="pane-body">
+              <div class="result" id="result" hidden></div>
+              <div class="tab-panel markdown" data-panel="task" id="task"></div>
+              <div class="tab-panel" data-panel="hints" id="hints" hidden></div>
+              <div class="tab-panel" data-panel="debrief" id="debrief" hidden></div>
+              <div class="tab-panel" data-panel="history" id="history" hidden></div>
+            </div>
+          </section>
 
-          <div class="panel term-panel">
-            <div class="term" id="term"></div>
-            <div class="overlay" id="overlay">
-              <div class="overlay-box">
-                <p id="overlay-msg">시작 버튼을 누르면 실습 환경이 만들어집니다.</p>
-                <pre class="build-log" id="build-log" hidden></pre>
-                <div class="overlay-actions" id="overlay-actions"></div>
+          <div class="splitter" id="splitter" role="separator" aria-orientation="vertical" aria-label="패널 크기 조절" tabindex="0" title="드래그해서 크기 조절 (더블클릭: 초기화)"></div>
+
+          <section class="pane term-pane">
+            <div class="term-bar">
+              <span class="conn" id="conn"><i></i><span>연결 안 됨</span></span>
+              <span class="term-tools">
+                <button class="icon-btn small" id="font-down" aria-label="글자 작게" title="글자 작게">A−</button>
+                <button class="icon-btn small" id="font-up" aria-label="글자 크게" title="글자 크게">A+</button>
+                <button class="icon-btn small" id="focus-btn" aria-label="문제 패널 접기" title="문제 패널 접기/펴기">⇤</button>
+              </span>
+            </div>
+            <div class="term-wrap">
+              <div class="term" id="term"></div>
+              <div class="overlay" id="overlay">
+                <div class="overlay-box">
+                  <div class="overlay-icon" id="overlay-icon">▶</div>
+                  <p id="overlay-msg"></p>
+                  <div class="progress-steps" id="progress-steps" hidden></div>
+                  <details class="build-log-wrap" id="build-log-wrap" hidden>
+                    <summary>자세한 로그</summary>
+                    <pre class="build-log" id="build-log"></pre>
+                  </details>
+                  <div class="overlay-actions" id="overlay-actions"></div>
+                </div>
               </div>
             </div>
-          </div>
+          </section>
         </div>
       </section>
     </main>
   </div>
+
+  <div class="toasts" id="toasts" aria-live="assertive"></div>
+
+  <dialog class="dialog pass-dialog" id="pass-dialog" aria-labelledby="pass-title">
+    <div class="pass-burst" aria-hidden="true">🎉</div>
+    <h2 id="pass-title">통과!</h2>
+    <p class="pass-sub" id="pass-sub"></p>
+    <ul class="checks" id="pass-checks"></ul>
+    <details class="pass-history" id="pass-history">
+      <summary>내가 입력한 명령어</summary>
+      <pre id="pass-history-list"></pre>
+    </details>
+    <div class="dialog-actions">
+      <button class="btn" id="pass-debrief">📖 해설 보기</button>
+      <button class="btn primary" id="pass-next">다음 문제 →</button>
+    </div>
+    <button class="icon-btn dialog-close" data-close aria-label="닫기">✕</button>
+  </dialog>
+
+  <dialog class="dialog help-dialog" id="help-dialog" aria-labelledby="help-title">
+    <h2 id="help-title">단축키와 사용법</h2>
+    <table class="keys">
+      <tr><td><kbd>Ctrl</kbd> + <kbd>Enter</kbd></td><td>채점 (터미널 안에서도 동작)</td></tr>
+      <tr><td><kbd>/</kbd></td><td>시나리오 검색</td></tr>
+      <tr><td><kbd>Alt</kbd> + <kbd>←</kbd> <kbd>→</kbd></td><td>이전 / 다음 시나리오</td></tr>
+      <tr><td><kbd>?</kbd></td><td>이 도움말</td></tr>
+    </table>
+    <h3>터미널 안에서 쓸 수 있는 명령</h3>
+    <table class="keys">
+      <tr><td><code>task</code></td><td>문제 다시 보기</td></tr>
+      <tr><td><code>hint</code></td><td>다음 힌트 (<code>hint 2</code>, <code>hint all</code>)</td></tr>
+      <tr><td><code>check</code></td><td>채점 (기록은 [채점] 버튼으로 저장)</td></tr>
+    </table>
+    <p class="muted">터미널 복사·붙여넣기: <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd> / <kbd>V</kbd> (맥은 <kbd>⌘</kbd>+<kbd>C</kbd> / <kbd>V</kbd>)</p>
+    <button class="icon-btn dialog-close" data-close aria-label="닫기">✕</button>
+  </dialog>
 
   <script src="/vendor/xterm.js"></script>
   <script src="/vendor/addon-fit.js"></script>

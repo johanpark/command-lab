@@ -1,4 +1,5 @@
 title: 백업에서 파일 하나만 살리기
+category: storage
 level: 2
 minutes: 20
 tags: [tar, gzip, 압축, 백업, 복원]

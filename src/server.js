@@ -72,13 +72,15 @@ const routes = {
     const { running, dockerOk } = await safeRunning();
     return {
       dockerOk,
-      envs: catalog.envs.map(({ id, name, description }) => ({ id, name, description })),
+      current: progress.current,
+      envs: catalog.envs.map(({ id, name, description, icon, categories }) => ({ id, name, description, icon, categories })),
       scenarios: catalog.scenarios.map((s) => {
         const { lastHistory, ...status } = scenarioStatus(progress, s.id);
         return {
           id: s.id,
           title: s.title,
           env: s.env,
+          category: s.category,
           level: s.level,
           minutes: s.minutes,
           tags: s.tags,
@@ -100,8 +102,11 @@ const routes = {
       id: scenario.id,
       title: scenario.title,
       env: scenario.env,
+      category: scenario.category,
       level: scenario.level,
+      minutes: scenario.minutes,
       tags: scenario.tags,
+      summary: scenario.summary,
       taskHtml: marked.parse(docs.task),
       hintsHtml: docs.hints.map((h) => marked.parse(h)),
       debriefHtml: docs.debrief ? marked.parse(docs.debrief) : '',

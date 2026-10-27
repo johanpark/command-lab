@@ -1,0 +1,6 @@
+title: 팀 공유 폴더 만들기
+category: permission
+level: 3
+minutes: 25
+tags: [useradd, groupadd, usermod -aG, chgrp, setgid]
+summary: 사용자와 그룹을 만들고, 그룹 구성원만 함께 쓸 수 있는 공유 폴더를 설정한다.

@@ -49,13 +49,16 @@ export function containerName(scenarioId) {
 // ---------- 이미지 ----------
 
 // 환경 디렉터리 내용이 바뀌면 이미지를 다시 빌드하도록 해시를 라벨로 남긴다.
+// env.yaml 은 빌드에 쓰이지 않는 메타데이터(이름, 카테고리 등)라서 제외한다.
+const NOT_BUILD_INPUT = new Set(['env.yaml']);
+
 export function hashDir(dir) {
   const h = crypto.createHash('sha256');
   const walk = (d) => {
     for (const entry of fs.readdirSync(d, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) {
       const p = path.join(d, entry.name);
       if (entry.isDirectory()) walk(p);
-      else {
+      else if (!(d === dir && NOT_BUILD_INPUT.has(entry.name))) {
         h.update(path.relative(dir, p).replaceAll('\\', '/'));
         h.update(fs.readFileSync(p, 'utf8').replaceAll('\r\n', '\n'));
       }

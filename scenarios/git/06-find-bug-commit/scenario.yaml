@@ -1,0 +1,6 @@
+title: 버그를 만든 커밋 찾아 되돌리기
+category: undo
+level: 3
+minutes: 25
+tags: [git blame, git log -L, git show, git revert]
+summary: 커밋 기록을 검색해서 버그가 들어온 커밋을 찾고, 기록을 지우지 않고 그 커밋만 되돌린다.

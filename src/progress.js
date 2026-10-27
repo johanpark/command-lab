@@ -78,6 +78,8 @@ export function scenarioStatus(progress, id) {
     passes: e.passes,
     streak: e.streak,
     nextReviewAt: e.nextReviewAt ?? null,
+    lastStartedAt: e.lastStartedAt ?? null,
+    lastPassedAt: e.lastPassedAt ?? null,
     lastHistory: e.lastHistory ?? [],
   };
 }
