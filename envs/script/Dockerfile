@@ -7,11 +7,11 @@ ENV DEBIAN_FRONTEND=noninteractive \
     EDITOR=nano \
     PYTHONDONTWRITEBYTECODE=1
 
-# Python 3 (+ openpyxl: 엑셀), Node.js, cron
+# Python 3 (+ openpyxl: 엑셀, pip·venv: 가상환경), Node.js, cron
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
       bash-completion ca-certificates cron curl file jq less nano procps sudo tree tzdata unzip vim-tiny \
-      python3 python3-openpyxl nodejs \
+      python3 python3-openpyxl python3-pip python3-venv nodejs \
  && ln -fs "/usr/share/zoneinfo/$TZ" /etc/localtime \
  && rm -rf /var/lib/apt/lists/*
 

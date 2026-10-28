@@ -1,0 +1,6 @@
+title: chmod -R 777 을 되돌려라
+category: permission
+level: 2
+minutes: 20
+tags: [chmod, find -type d, find -type f, "-exec {} +", 755, 644, 640]
+summary: 급한 마음에 웹 폴더 전체를 777 로 열어 버렸다. 폴더는 755, 파일은 644, 스크립트는 755, 비밀 설정은 640 으로 종류별로 되돌린다.
