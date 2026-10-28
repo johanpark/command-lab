@@ -1,0 +1,6 @@
+title: 중복 가입 정리하기
+category: modify
+level: 3
+minutes: 25
+tags: [GROUP BY, HAVING, "MIN()", 서브쿼리, UNIQUE INDEX]
+summary: 버그로 두 번 가입된 회원을 찾아, 주문을 원래 계정으로 옮기고 중복을 지운 뒤 다시는 안 생기게 막는다.

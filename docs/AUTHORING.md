@@ -167,4 +167,4 @@ Docker 환경의 시나리오는 `setup.sh` 에서 `source /usr/local/lib/lab-do
 | `kubectl` (kind/k3s) | CrashLoopBackOff 원인 찾기, 스케일, 롤백 |
 | `network` | `curl`, `dig`, `ss` 로 연결 문제 진단 |
 | `vim` | 파일 편집 미션 |
-| `python` | REPL, 가상환경, pip 문제 |
+| `script` 확장 | 가상환경(venv)·pip 문제, CSV→엑셀 변환, API 응답 처리 |

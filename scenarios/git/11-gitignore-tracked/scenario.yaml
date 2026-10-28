@@ -1,0 +1,6 @@
+title: .gitignore 에 넣었는데 계속 올라가요
+category: basics
+level: 2
+minutes: 15
+tags: [.gitignore, git rm --cached, git check-ignore, git status]
+summary: 이미 커밋된 파일은 .gitignore 가 무시하지 않는다. 로컬 파일은 남기고 저장소에서만 추적을 끊는다.

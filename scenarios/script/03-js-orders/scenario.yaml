@@ -1,0 +1,6 @@
+title: 깨진 JSON 이 섞인 주문 집계 (Node.js)
+category: data
+level: 2
+minutes: 25
+tags: [node, JSON.parse, try/catch, fs.readdirSync, process.exitCode]
+summary: 주문 JSON 파일 수백 개를 집계하는 Node.js 스크립트가 깨진 파일 하나 때문에 멈춘다. 깨진 파일은 건너뛰고 기록하도록 고친다.

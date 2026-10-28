@@ -1,0 +1,6 @@
+title: 파일 정리 파이썬 스크립트 고치기
+category: files
+level: 2
+minutes: 25
+tags: [python3, pathlib, shutil.move, rglob, --dry-run]
+summary: 다운로드 폴더를 종류별로 정리하는 파이썬 스크립트의 버그 3개(하위 폴더, 대문자 확장자, 같은 이름 덮어쓰기)를 고쳐서 실행한다.
