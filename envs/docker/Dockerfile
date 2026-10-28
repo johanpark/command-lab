@@ -21,5 +21,7 @@ RUN (userdel -r ubuntu 2>/dev/null || true) \
  && chmod 440 /etc/sudoers.d/learner
 
 COPY lab-docker.sh /usr/local/lib/lab-docker.sh
+COPY start-dockerd.sh /usr/local/bin/start-dockerd
+RUN chmod +x /usr/local/bin/start-dockerd
 
 WORKDIR /home/learner

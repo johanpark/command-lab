@@ -1,0 +1,6 @@
+title: 40개 커밋 중 범인 찾기 (bisect)
+category: undo
+level: 3
+minutes: 25
+tags: [git bisect, git bisect run, 이진 탐색, 테스트]
+summary: 언제부터 깨졌는지 모르는 버그를 git bisect 로 이진 탐색해서 처음 깨진 커밋을 찾는다.

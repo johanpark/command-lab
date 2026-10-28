@@ -1,0 +1,6 @@
+title: 파이썬·노드 스크립트를 cron 에 등록하기
+category: automation
+level: 3
+minutes: 30
+tags: [crontab -e, cron, python3, node, ">> 로그 2>&1", 상대 경로, 환경 변수]
+summary: .py 와 .js 스크립트를 crontab 에 등록하고 로그를 남긴다. 터미널에선 되는데 cron 에선 실패하는 원인(작업 폴더, .bashrc 환경 변수)을 해결한다.

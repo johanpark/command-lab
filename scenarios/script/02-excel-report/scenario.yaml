@@ -1,0 +1,6 @@
+title: 엑셀 월별 시트 합쳐서 보고서 만들기
+category: data
+level: 2
+minutes: 30
+tags: [python3, openpyxl, 엑셀, load_workbook, 시트 반복]
+summary: 월별 시트로 나뉜 매출 엑셀을 파이썬(openpyxl)으로 읽어 지점별 합계 보고서 엑셀을 만든다. 텍스트로 저장된 숫자와 빈 줄을 처리한다.

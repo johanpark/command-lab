@@ -1,0 +1,6 @@
+title: 깨진 심볼릭 링크 정리하기
+category: storage
+level: 2
+minutes: 20
+tags: [ln -s, readlink, find -xtype l, "ls -l", ln -sfn]
+summary: 서버 이전 후 대상이 사라진 심볼릭 링크를 찾아 개수를 세고, 하나는 새 위치로 고치고 나머지는 지운다.

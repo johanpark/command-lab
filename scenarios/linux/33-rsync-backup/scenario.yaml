@@ -1,0 +1,6 @@
+title: rsync 로 백업 동기화
+category: storage
+level: 2
+minutes: 20
+tags: [rsync -a, 끝 슬래시, --delete, --dry-run]
+summary: rsync 로 원본과 백업을 똑같이 맞추되, 끝 슬래시와 --delete 의 함정을 피한다.

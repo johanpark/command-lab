@@ -27,7 +27,17 @@ const store = {
 
 const LEVEL_NAME = { 1: '입문', 2: '기초', 3: '실전' };
 const STATE_NAME = { new: '새 문제', tried: '도전 중', done: '통과', review: '복습할 때' };
-const STATE_MARK = { new: '', tried: '…', done: '✓', review: '↻' };
+// 글꼴마다 모양이 달라지는 문자(✓ ↻ …) 대신 SVG 로 그린다
+const svgIcon = (body) => `<svg viewBox="0 0 16 16" aria-hidden="true">${body}</svg>`;
+const STATE_MARK = {
+  new: '',
+  tried: svgIcon('<path d="M8 3.5a4.5 4.5 0 0 1 0 9z" fill="currentColor"/>'),
+  done: svgIcon('<path d="M4.4 8.3l2.4 2.4 4.8-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'),
+  review: svgIcon(
+    '<path d="M11.9 8.6a4 4 0 1 1-1.3-3.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>' +
+      '<path d="M11.6 2.9v2.6H9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+  ),
+};
 const isDone = (s) => s.status.state === 'done' || s.status.state === 'review';
 
 const state = {

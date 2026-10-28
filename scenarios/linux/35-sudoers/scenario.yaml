@@ -1,0 +1,6 @@
+title: 특정 명령만 sudo 허용하기
+category: permission
+level: 3
+minutes: 25
+tags: [sudoers, visudo, NOPASSWD, sudo -l, 최소 권한]
+summary: 배포 계정이 앱 재시작 명령 하나만 비밀번호 없이 sudo 로 실행하게 하고, 다른 권한은 주지 않는다.

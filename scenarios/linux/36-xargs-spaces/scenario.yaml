@@ -1,0 +1,6 @@
+title: 이름에 공백이 있는 파일 한꺼번에 처리하기
+category: shell
+level: 2
+minutes: 20
+tags: [find, xargs, -print0, "xargs -0", gzip, wc]
+summary: find 결과를 xargs 로 넘길 때 파일 이름의 공백 때문에 깨지는 문제를 -print0 / -0 으로 해결한다.

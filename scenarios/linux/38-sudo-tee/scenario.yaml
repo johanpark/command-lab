@@ -1,0 +1,6 @@
+title: sudo 를 붙였는데도 Permission denied
+category: permission
+level: 2
+minutes: 15
+tags: [sudo, tee, "tee -a", ">>", 리다이렉션]
+summary: '"sudo echo ... >> 파일" 이 실패하는 이유를 이해하고, sudo tee -a 로 root 소유 설정 파일에 안전하게 추가한다.'

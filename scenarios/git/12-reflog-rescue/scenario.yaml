@@ -1,0 +1,6 @@
+title: reset --hard 로 날린 커밋 되살리기 (reflog)
+category: undo
+level: 3
+minutes: 25
+tags: [git reflog, git reset --hard, git branch -D, ORIG_HEAD, "HEAD@{n}"]
+summary: 잘못된 reset --hard 와 브랜치 삭제로 사라진 커밋을 reflog 에서 찾아 main 과 브랜치를 원래대로 되돌린다.

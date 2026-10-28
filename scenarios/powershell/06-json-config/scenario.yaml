@@ -1,0 +1,6 @@
+title: JSON 설정 파일 고치기
+category: pipeline
+level: 3
+minutes: 25
+tags: [ConvertFrom-Json, ConvertTo-Json, -Depth, Add-Member, Set-Content]
+summary: JSON 설정을 객체로 읽어 값을 바꾸고 다시 저장한다. ConvertTo-Json 의 기본 깊이(2) 때문에 설정이 망가지는 함정을 피한다.

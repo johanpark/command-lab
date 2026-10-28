@@ -1,0 +1,6 @@
+title: unhealthy 컨테이너 살리기 (헬스체크)
+category: incident
+level: 2
+minutes: 25
+tags: [docker ps, unhealthy, HEALTHCHECK, "docker inspect .State.Health", "-e"]
+summary: 실행은 되는데 unhealthy 인 컨테이너를 찾아 헬스체크 기록과 로그로 원인을 밝히고, 설정을 지켜서 다시 만든다.

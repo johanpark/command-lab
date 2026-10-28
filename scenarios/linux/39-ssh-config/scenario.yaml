@@ -1,0 +1,6 @@
+title: ssh 접속 별칭 만들기 (~/.ssh/config)
+category: network
+level: 2
+minutes: 20
+tags: [ssh, ~/.ssh/config, Host, "ssh -G", IdentityFile]
+summary: 긴 ssh 명령을 ~/.ssh/config 별칭으로 줄이고, "먼저 나온 설정이 이긴다" 규칙 때문에 생기는 함정을 해결한다.
