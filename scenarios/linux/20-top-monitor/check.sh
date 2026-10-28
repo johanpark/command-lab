@@ -16,5 +16,5 @@ else
   fail "top-report.txt 에 top 화면(요약 + 프로세스 목록)이 저장됐다 (top -b -n 1 > ~/top-report.txt)"
 fi
 alive=0; for p in "$cpu" "$mem" web-server queue-worker; do pgrep -x "$p" >/dev/null && alive=$((alive + 1)); done
-[ "$alive" -eq 4 ] && pass "아무 프로세스도 종료하지 않았다" || fail "아무 프로세스도 종료하지 않았다 (관찰만 하라고 했어요! lab reset 으로 다시 시작)"
+[ "$alive" -eq 4 ] && pass "아무 프로세스도 종료하지 않았다" || fail "아무 프로세스도 종료하지 않았다 (관찰만 하라고 했어요! 웹에서는 '↺ 처음부터', 터미널에서는 lab reset 으로 다시 시작)"
 finish

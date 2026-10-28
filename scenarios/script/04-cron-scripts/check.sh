@@ -34,19 +34,19 @@ PY
 )
 envs=(); while IFS= read -r l; do envs+=("${l#ENV	}"); done < <(grep '^ENV	' <<< "$parsed")
 job() { grep "^JOB	$1	" <<< "$parsed" | head -n 1; }
-sched() { job "$1" | cut -f3; }
+sched() { job "$1" | cut -f3 | sed -E 's/(^|[^0-9])0+([0-9])/\1\2/g'; }   # 07 → 7
 cmd() { job "$1" | cut -f4-; }
 lastlog() { if [ -s "$1" ]; then tail -n 1 "$1" | cut -c1-120; else echo "로그 파일이 없거나 비어 있어요"; fi; }
 run_like_cron() { (cd "$H" && runuser -u "$LEARNER" -- env -i HOME="$H" LOGNAME="$LEARNER" SHELL=/bin/sh PATH=/usr/bin:/bin "${envs[@]}" timeout 20 sh -c "$1" > /dev/null 2>&1); }
 
 s=$(sched cleanup.py)
 case "$s" in
-  "*/30 * * * *"|"0,30 * * * *"|"00,30 * * * *"|"0-59/30 * * * *") pass "cleanup.py 가 30분마다 등록됐다" ;;
+  "*/30 * * * *"|"0,30 * * * *"|"0-59/30 * * * *") pass "cleanup.py 가 30분마다 등록됐다" ;;
   *) fail "cleanup.py 가 30분마다 등록됐다 (지금: '${s:-등록 안 됨}')" ;;
 esac
 s=$(sched daily_report.js)
 case "$s" in
-  "30 7 * * *"|"30 07 * * *") pass "daily_report.js 가 매일 07:30 에 등록됐다" ;;
+  "30 7 * * *") pass "daily_report.js 가 매일 07:30 에 등록됐다" ;;
   *) fail "daily_report.js 가 매일 07:30 에 등록됐다 (지금: '${s:-등록 안 됨}')" ;;
 esac
 

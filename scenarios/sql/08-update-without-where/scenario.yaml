@@ -1,0 +1,6 @@
+title: WHERE 없는 UPDATE 사고 복구
+category: modify
+level: 3
+minutes: 35
+tags: [UPDATE, WHERE, ATTACH, 백업, 이벤트 로그, 트랜잭션]
+summary: WHERE 를 빼먹은 UPDATE 로 모든 주문의 출고 시각이 같은 값이 됐다. 어젯밤 백업과 이벤트 로그를 조합해 원래 값을 되살리고, 오늘의 다른 변경은 지킨다.

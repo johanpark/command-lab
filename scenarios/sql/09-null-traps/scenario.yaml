@@ -1,0 +1,6 @@
+title: NULL 때문에 숫자가 이상해요
+category: query
+level: 2
+minutes: 25
+tags: [NULL, IS NULL, NOT IN, NOT EXISTS, COALESCE, AVG]
+summary: '"= NULL", NULL 이 섞인 NOT IN, NULL 을 빼고 계산하는 AVG 처럼 NULL 때문에 조용히 틀린 답이 나오는 쿼리를 고친다.'

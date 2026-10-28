@@ -1,0 +1,4 @@
+-- 마케팅 통계 (작성: 동료) — 뭔가 이상함
+SELECT COUNT(*) AS no_phone FROM members WHERE phone = NULL;
+SELECT COUNT(*) AS never_referrer FROM members WHERE id NOT IN (SELECT referrer_id FROM members);
+SELECT AVG(points) AS avg_points FROM members;

@@ -1,0 +1,6 @@
+title: 이미지가 왜 이렇게 커요? (.dockerignore)
+category: build
+level: 2
+minutes: 20
+tags: [.dockerignore, docker build, docker images, "COPY . .", 비밀 유출]
+summary: COPY . . 때문에 node_modules, 로그, .git, .env 까지 이미지에 들어가 크기가 커지고 비밀번호가 유출됐다. .dockerignore 로 필요한 것만 넣는다.

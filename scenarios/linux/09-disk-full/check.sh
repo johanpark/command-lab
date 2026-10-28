@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
 source /opt/cmdlab/lib/helpers.sh
 big=$(secret_get big)
-got=$(answer)
-got=${got/#\~/$H}
-if [ "$got" = "$big" ]; then pass "answer.txt 에 가장 큰 파일의 경로를 적었다"
+# 경로 표기를 너그럽게: du 의 '크기<탭>경로', ~/..., ./..., 홈이나 ~/app 기준 상대 경로 모두 인정
+path_ok() {
+  local p
+  p=$(answer | tail -n 1 | awk '{ print $NF }')
+  p=${p/#\~/$H}; p=${p#./}
+  [ "$p" = "$big" ] || [ "$H/$p" = "$big" ] || [ "$H/app/$p" = "$big" ]
+}
+if path_ok; then pass "answer.txt 에 가장 큰 파일의 경로를 적었다"
 else fail "answer.txt 에 가장 큰 파일의 경로를 적었다 (지금 적힌 값: '$(answer)')"; fi
 expect "가장 큰 파일을 삭제했다" test ! -e "$big"
 lost=0
