@@ -20,7 +20,7 @@ const users = Array.from({ length: n }, (_, i) => ({
   active: rnd() < 0.85,
 }));
 fs.writeFileSync('/opt/cmdlab/secret/users.json', JSON.stringify(users));
-http.createServer((req, res) => {
+const handler = (req, res) => {
   const u = new URL(req.url, 'http://localhost');
   const json = (code, body) => { res.writeHead(code, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(body, null, 2) + '\n'); };
   if (u.pathname !== '/api/users') return json(404, { error: 'not found', hint: 'GET /api/users' });
@@ -29,7 +29,10 @@ http.createServer((req, res) => {
   const data = users.slice((page - 1) * perPage, page * perPage);
   const more = page * perPage < users.length;
   json(200, { data, page, per_page: perPage, total: users.length, next: more ? `/api/users?page=${page + 1}&per_page=${perPage}` : null });
-}).listen(8080, '127.0.0.1');
+};
+// localhost 가 IPv6(::1) 로 풀리는 환경도 있어서 둘 다 연다. IPv6 가 없는 커널이면 ::1 쪽은 조용히 건너뛴다
+http.createServer(handler).listen(8080, '127.0.0.1');
+http.createServer(handler).on('error', () => {}).listen(8080, '::1');
 JS
 pkill -f /opt/cmdlab/secret/api.js 2>/dev/null || true
 setsid nohup node /opt/cmdlab/secret/api.js "$RANDOM" > /dev/null 2>&1 < /dev/null &
