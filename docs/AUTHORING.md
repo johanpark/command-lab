@@ -137,7 +137,7 @@ privileged: true                  # 컨테이너 안에서 dockerd 를 돌려야
 volumes: [/var/lib/docker]        # 익명 볼륨 (실습 종료 시 함께 삭제)
 memory: 1536                      # MB (기본 768)
 cpus: 2                           # 기본 1
-command: [sh, -c, "dockerd > /var/log/dockerd.log 2>&1 & exec sleep infinity"]
+command: [start-dockerd]           # 이미지에 넣은 시작 스크립트 (envs/docker/start-dockerd.sh)
 ```
 Docker 환경의 시나리오는 `setup.sh` 에서 `source /usr/local/lib/lab-docker.sh` 후 `wait_docker`, `ensure_busybox`, `build_image 태그 [폴더] <<'EOF' ... EOF` 를 쓸 수 있어요.
 
