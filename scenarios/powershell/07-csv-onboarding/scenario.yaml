@@ -1,0 +1,6 @@
+title: CSV 명단으로 폴더 한꺼번에 만들기
+category: admin
+level: 2
+minutes: 25
+tags: [Import-Csv, ForEach-Object, New-Item, Trim, ToLower, Where-Object]
+summary: 입사자 CSV 를 읽어 사람마다 폴더와 환영 파일을 만든다. 취소된 행, 공백·대문자가 섞인 계정 이름을 정리한다.

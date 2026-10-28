@@ -1,0 +1,6 @@
+title: 한글이 깨지는 CSV 합치기 (인코딩)
+category: data
+level: 2
+minutes: 25
+tags: [인코딩, CP949, UTF-8, BOM, python3, iconv, file]
+summary: 엑셀에서 저장한 CP949, BOM 이 붙은 UTF-8, 일반 UTF-8 CSV 를 하나로 합쳐, 엑셀에서 한글이 깨지지 않게 저장한다.

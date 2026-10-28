@@ -1,0 +1,6 @@
+title: 터미널을 닫아도 작업이 계속 돌게
+category: shell
+level: 2
+minutes: 15
+tags: [nohup, "&", jobs, disown, setsid, SIGHUP]
+summary: 오래 걸리는 백업 작업을 터미널(SSH)이 끊겨도 계속 돌도록 백그라운드로 실행하고, 출력은 로그 파일로 남긴다.
