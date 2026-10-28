@@ -1,0 +1,6 @@
+title: 릴리스 압축 파일 제자리에 풀기
+category: storage
+level: 2
+minutes: 20
+tags: [tar tzf, tar -C, --strip-components, 타르폭탄, 권한 보존]
+summary: 맨 위 폴더가 하나 더 있는 압축과, 폴더 없이 파일이 쏟아지는 압축(타르 폭탄)을 미리 들여다보고 정확한 위치에 푼다.

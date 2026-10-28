@@ -1,0 +1,6 @@
+title: main 에 커밋해 버렸어요 (브랜치로 옮기기)
+category: branch
+level: 2
+minutes: 20
+tags: [git switch -c, git branch -f, git reset, origin/main, 작업 보존]
+summary: 새 브랜치를 만드는 걸 깜빡하고 main 에 커밋했다. 커밋과 아직 커밋 안 한 작업까지 기능 브랜치로 옮기고 main 은 원격과 같게 되돌린다.
