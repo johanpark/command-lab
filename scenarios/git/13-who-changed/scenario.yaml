@@ -1,0 +1,6 @@
+title: 이 값을 누가 바꿨지? (blame, log -S)
+category: undo
+level: 2
+minutes: 20
+tags: [git blame, "git blame -w", "git log -S", "git log -p", git show]
+summary: 설정값 하나가 언제 누구 커밋으로 바뀌었는지 찾는다. 코드 포맷 정리 커밋 때문에 blame 이 엉뚱한 사람을 가리키는 함정을 피한다.

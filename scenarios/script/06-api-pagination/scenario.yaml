@@ -1,0 +1,6 @@
+title: API 결과가 20개뿐이에요 (페이지네이션)
+category: data
+level: 2
+minutes: 25
+tags: [REST API, 페이지네이션, fetch, curl, jq, JSON]
+summary: 사내 API 가 한 번에 20명씩만 돌려준다. 다음 페이지를 끝까지 따라가 전체 사용자를 모으고 집계한다.

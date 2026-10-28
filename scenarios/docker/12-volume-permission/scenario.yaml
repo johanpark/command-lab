@@ -1,0 +1,6 @@
+title: 컨테이너가 폴더에 못 써요 (볼륨 권한)
+category: network
+level: 2
+minutes: 20
+tags: [-v, bind mount, USER, uid, chown, Permission denied]
+summary: root 가 아닌 사용자로 도는 컨테이너가 연결한 폴더에 쓰지 못한다. uid 를 확인해 폴더 소유자를 맞추고, 777 이나 root 실행 같은 위험한 해결은 피한다.

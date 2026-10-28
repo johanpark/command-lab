@@ -1,0 +1,6 @@
+title: 월별 매출 보고서 CSV 로 내보내기
+category: query
+level: 2
+minutes: 20
+tags: [strftime, GROUP BY, .mode csv, .headers on, .output, AS]
+summary: 날짜를 월 단위로 묶어 매출을 집계하고, 엑셀에서 열 수 있는 CSV 파일로 내보낸다.

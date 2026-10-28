@@ -1,0 +1,6 @@
+title: 신입 서버 계정 만들기
+category: permission
+level: 2
+minutes: 25
+tags: [useradd, usermod -aG, id, authorized_keys, chmod 700]
+summary: 신입 개발자 계정을 홈 폴더·셸·그룹·SSH 키까지 갖춰 만들고, 기존 사용자를 그룹에 추가할 때 다른 그룹이 빠지는 함정을 피한다.
