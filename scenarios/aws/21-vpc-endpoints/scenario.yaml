@@ -1,0 +1,6 @@
+title: NAT 요금 폭탄 줄이기 (VPC 게이트웨이 엔드포인트)
+category: compute
+level: 3
+minutes: 20
+tags: [create-vpc-endpoint, Gateway 엔드포인트, S3, DynamoDB, route-table-ids, NAT 비용]
+summary: 이번 달 NAT 게이트웨이 요금이 서버 요금보다 많이 나왔다. 대부분 S3·DynamoDB 로 가는 트래픽이다. 무료인 게이트웨이 엔드포인트를 만들어 그 트래픽이 NAT 를 거치지 않게 하고, 외부 API 로 가는 경로는 그대로 둔다.
