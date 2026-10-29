@@ -1,0 +1,6 @@
+title: 세일 이벤트 대비 서버 늘리고 줄이기 (Auto Scaling)
+category: compute
+level: 2
+minutes: 25
+tags: [autoscaling, update-auto-scaling-group, put-scaling-policy, TargetTrackingScaling, put-scheduled-update-group-action, 시간대]
+summary: 내일 대형 세일이 있다. 오토스케일링 그룹을 미리 키워 두고, CPU 에 따라 자동으로 늘어나게 정책을 걸고, 세일이 끝나는 시각에 원래 크기로 돌아오게 예약까지 해 둔다.

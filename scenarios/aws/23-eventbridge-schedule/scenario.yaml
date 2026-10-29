@@ -1,0 +1,6 @@
+title: 새벽 배치가 오후에 돌아요 (EventBridge 예약 규칙, UTC)
+category: ops
+level: 3
+minutes: 25
+tags: [events put-rule, schedule-expression, cron, UTC 와 KST, put-targets, 요일 넘어감]
+summary: 새벽 4시에 돌아야 할 로그 정리 작업이 오후 1시에 돌면서 서비스가 느려졌다. EventBridge 의 cron 이 UTC 기준이라는 걸 이해하고 고친 다음, 평일 새벽 보고서 규칙을 요일까지 맞춰 새로 만든다.
