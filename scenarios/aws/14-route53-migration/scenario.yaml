@@ -1,0 +1,6 @@
+title: 새 서버로 이사하기 (Route 53 DNS 레코드)
+category: compute
+level: 3
+minutes: 25
+tags: [route53, list-resource-record-sets, change-resource-record-sets, UPSERT, change-batch JSON, CNAME]
+summary: 웹 서비스를 새 EC2 서버로 옮기는 날. 기존 서버를 가리키는 DNS 레코드만 골라 새 서버의 공인 IP 로 바꾸고, 모바일 주소를 CNAME 으로 추가한다. 메일·인증용 레코드와 다른 서버 레코드는 건드리지 않는다.

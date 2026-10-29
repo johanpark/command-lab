@@ -1,0 +1,6 @@
+title: 고객 문의 처리하기 — 주문 조회와 환불 (DynamoDB)
+category: database
+level: 2
+minutes: 25
+tags: [dynamodb, describe-table, query, key-condition-expression, begins_with, update-item, condition-expression]
+summary: 고객센터에서 문의가 들어왔다. DynamoDB 주문 테이블에서 한 고객의 10월 주문 수를 세고, 가장 최근 주문 하나만 환불 상태로 바꾼다. 테이블 전체를 훑는 scan 대신 키로 query 하는 법을 익힌다.
