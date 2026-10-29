@@ -1,0 +1,6 @@
+title: 프라이빗 서버가 인터넷에 못 나가요 (라우팅 테이블, NAT)
+category: compute
+level: 3
+minutes: 25
+tags: [VPC, 서브넷, describe-route-tables, create-route, NAT 게이트웨이, associate-route-table]
+summary: 프라이빗 서브넷의 앱 서버들이 패키지 설치도 외부 API 호출도 못 한다. VPC 의 라우팅 테이블을 따라가 원인을 찾고, NAT 게이트웨이로 나가는 경로를 만든다. 인터넷 게이트웨이로 직접 열어서는 안 된다.

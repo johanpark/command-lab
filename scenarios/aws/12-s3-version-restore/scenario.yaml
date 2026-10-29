@@ -1,0 +1,6 @@
+title: 덮어쓰고 지워버린 설정 파일 되살리기 (S3 버전 관리)
+category: storage
+level: 2
+minutes: 20
+tags: [list-object-versions, --version-id, copy-object, 삭제 마커, 버전 관리]
+summary: 배포 스크립트가 S3 의 운영 설정 파일을 깨진 내용으로 덮어쓰고, 다른 파일은 지워버렸다. 버전 관리가 켜져 있으니 이전 버전을 찾아 되살린다. 원인 분석을 위해 기록은 남겨 둔다.

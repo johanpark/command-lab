@@ -1,0 +1,6 @@
+title: CPU 가 치솟으면 알림 받기 (CloudWatch 알람, SNS)
+category: ops
+level: 2
+minutes: 25
+tags: [sns subscribe, cloudwatch put-metric-alarm, describe-alarms, delete-alarms, dimensions, 태그로 대상 고르기]
+summary: 어젯밤 운영 서버 CPU 가 100% 였는데 아무도 몰랐다. 운영 서버마다 CPU 알람을 만들어 SNS 로 당직자에게 메일이 가게 하고, 알림이 갈 곳이 없는 옛 알람은 정리한다.
