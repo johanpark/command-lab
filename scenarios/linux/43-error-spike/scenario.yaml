@@ -1,0 +1,6 @@
+title: 몇 시 몇 분에 장애가 났지? (시간대별 집계)
+category: text
+level: 2
+minutes: 20
+tags: [cut, awk, sort, uniq -c, 시간대별 집계, 5xx]
+summary: 하루치 접속 로그에서 5xx 에러만 골라 분 단위·시간 단위로 세어, 장애가 몰린 시각을 찾는다. 404 폭주는 장애가 아니다.

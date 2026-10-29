@@ -1,0 +1,6 @@
+title: 릴리스에 태그 달기 (git tag)
+category: branch
+level: 2
+minutes: 15
+tags: [git tag -a, git push origin 태그, git log --oneline, git show 태그]
+summary: 이미 지나간 릴리스 커밋을 찾아 설명이 붙은(annotated) 태그를 달고, push 할 때 따로 올려야 하는 태그를 원격에 올린다.

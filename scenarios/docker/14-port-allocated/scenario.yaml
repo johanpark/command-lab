@@ -1,0 +1,6 @@
+title: port is already allocated
+category: incident
+level: 2
+minutes: 15
+tags: [docker ps, docker port, "--filter publish", docker rm -f, -p]
+summary: 새 버전을 8080 에 띄우려는데 포트가 이미 쓰이고 있다. 어떤 컨테이너가 잡고 있는지 찾아 정리하고, 같은 포트로 새 버전을 띄운다.

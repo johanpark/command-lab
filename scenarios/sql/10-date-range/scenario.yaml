@@ -1,0 +1,6 @@
+title: 월말 매출이 사라졌어요 (날짜 범위)
+category: query
+level: 2
+minutes: 20
+tags: [BETWEEN, 날짜 범위, ">= AND <", date(), 시각이 있는 날짜]
+summary: 'BETWEEN 으로 10월을 고르면 시각이 붙은 10월 31일 결제가 빠지는 함정을 찾고, 반열린 구간(>= 와 <)으로 고친다.'

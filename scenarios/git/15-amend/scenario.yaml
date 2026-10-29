@@ -1,0 +1,6 @@
+title: 방금 한 커밋 고치기 (amend)
+category: undo
+level: 1
+minutes: 15
+tags: [git commit --amend, git add, git push, git show --stat]
+summary: 오타 난 커밋 메시지와 빠뜨린 파일을, 커밋을 하나 더 만들지 않고 방금 커밋에 합친 뒤 push 한다.

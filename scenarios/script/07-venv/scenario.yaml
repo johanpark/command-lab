@@ -1,0 +1,6 @@
+title: pip install 이 막혀요 (가상환경 venv)
+category: files
+level: 2
+minutes: 25
+tags: [python3 -m venv, pip install -r, externally-managed-environment, --no-index, --find-links]
+summary: Ubuntu 24.04 에서 pip install 이 externally-managed-environment 로 막힌다. 프로젝트용 가상환경을 만들고 사내 패키지 폴더에서 설치해 스크립트를 돌린다.
