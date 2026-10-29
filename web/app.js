@@ -868,11 +868,28 @@ function connectTerminal() {
   fit.fit();
   state.term = term;
   state.fit = fit;
-  // Ctrl/⌘+Enter 는 셸로 보내지 않고 채점
   term.attachCustomKeyEventHandler((e) => {
-    if (e.type === 'keydown' && e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+    if (e.type !== 'keydown') return true;
+    // Ctrl/⌘+Enter 는 셸로 보내지 않고 채점
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
       check();
       return false;
+    }
+    // 복사·붙여넣기 (맥의 ⌘C/⌘V 는 브라우저가 원래 처리한다)
+    if (e.ctrlKey && !e.metaKey && !e.altKey) {
+      const key = e.key.toLowerCase();
+      // Ctrl+C: 선택한 글자가 있으면 복사, 없으면 셸에 ^C (실행 중인 명령 멈추기)
+      // Ctrl+Shift+C: 항상 복사 (브라우저의 개발자 도구 단축키를 막는다)
+      if (key === 'c' && (e.shiftKey || term.hasSelection())) {
+        e.preventDefault();
+        if (term.hasSelection()) {
+          navigator.clipboard?.writeText(term.getSelection()).then(() => toast('복사했어요', 'info', 1500), () => {});
+          term.clearSelection();
+        }
+        return false;
+      }
+      // Ctrl+V / Ctrl+Shift+V: 셸에 ^V 를 보내지 않고 브라우저의 붙여넣기에 맡긴다
+      if (key === 'v') return false;
     }
     return true;
   });
