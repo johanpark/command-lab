@@ -1,0 +1,6 @@
+title: .env 의 비밀번호를 Secrets Manager 로 옮기기
+category: ops
+level: 3
+minutes: 30
+tags: [aws secretsmanager create-secret, get-secret-value, --query SecretString, jq, .env]
+summary: 서버의 .env 파일에 평문으로 있던 DB 비밀번호를 Secrets Manager 로 옮기고, 앱이 실행할 때 거기서 꺼내 쓰도록 시작 스크립트를 고친다.

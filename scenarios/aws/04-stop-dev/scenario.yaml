@@ -1,0 +1,6 @@
+title: 밤에는 개발 서버 끄기 (태그로 고르기)
+category: compute
+level: 2
+minutes: 20
+tags: [aws ec2 stop-instances, --filters tag, --query, JMESPath, 비용 절감]
+summary: 태그로 개발(dev) 서버만 골라 끄되, KeepRunning 표시가 있는 서버와 운영 서버는 건드리지 않는다.

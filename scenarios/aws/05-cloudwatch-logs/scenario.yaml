@@ -1,0 +1,6 @@
+title: 서버에 안 들어가고 로그에서 에러 찾기 (CloudWatch Logs)
+category: ops
+level: 2
+minutes: 20
+tags: [aws logs describe-log-groups, filter-log-events, --filter-pattern, logStreamName, --query]
+summary: 서버 여러 대의 로그가 모인 CloudWatch Logs 에서 메모리 부족 에러만 골라 세고, 어느 서버(로그 스트림)에서 났는지 찾는다.

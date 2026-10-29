@@ -1,0 +1,6 @@
+title: 처음 받은 AWS 계정 둘러보기
+category: basics
+level: 1
+minutes: 20
+tags: [aws ec2 describe-instances, aws s3 ls, --query, --output, --filters]
+summary: 인수인계받은 AWS 계정에서 실행 중인 서버 수, 특정 서버의 ID, 버킷 목록을 AWS CLI 로 뽑아 본다.

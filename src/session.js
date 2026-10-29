@@ -106,7 +106,8 @@ export async function checkScenario(catalog, scenario) {
 
 // 모범 풀이 파일과 그것을 실행할 명령. 셸 종류마다 하나씩 추가하면 된다.
 const SOLUTION_RUNNERS = [
-  ['solution.sh', (code) => ['bash', '-e', '-c', code]],
+  // 학습자의 로그인 셸(lib/profile.sh)과 같은 umask 로 실행한다 (docker exec 기본값은 0000)
+  ['solution.sh', (code) => ['bash', '-e', '-c', `umask 022\n${code}`]],
   ['solution.ps1', (code) => ['pwsh', '-NoLogo', '-NoProfile', '-NonInteractive', '-Command', `$ErrorActionPreference = 'Stop'\n${code}`]],
 ];
 

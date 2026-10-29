@@ -1,0 +1,6 @@
+title: 새 EC2 에서 앱이 안 떠요 (user-data 로그)
+category: ec2
+level: 3
+minutes: 30
+tags: [cloud-init, user-data, /var/log/cloud-init-output.log, set -u, unbound variable]
+summary: 오토스케일링으로 새로 뜬 서버에서 앱이 안 돈다. cloud-init 로그에서 부팅 스크립트가 멈춘 줄을 찾고, 남은 단계를 마무리한 뒤 다음 서버를 위해 스크립트도 고친다.
