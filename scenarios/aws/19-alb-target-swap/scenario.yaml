@@ -1,0 +1,6 @@
+title: 로드 밸런서 뒤 서버를 새 버전으로 교체 (ALB 대상 그룹)
+category: compute
+level: 3
+minutes: 25
+tags: [elbv2, describe-target-health, register-targets, deregister-targets, modify-target-group, 헬스 체크]
+summary: 새 버전 서버가 준비됐다. 로드 밸런서의 대상 그룹에 새 서버를 올바른 포트로 등록하고, 헬스 체크 경로를 새 앱에 맞추고, 옛 서버는 빼되 되돌릴 수 있게 꺼 두지는 않는다.

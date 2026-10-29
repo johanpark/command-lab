@@ -1,0 +1,6 @@
+title: 처리 못 한 주문 메시지 다시 넣기 (SQS 데드레터 큐)
+category: messaging
+level: 3
+minutes: 30
+tags: [sqs, receive-message, message-attributes, send-message, delete-message, RedrivePolicy, DLQ]
+summary: 결제 연동 장애로 주문 메시지들이 데드레터 큐(DLQ)에 쌓였다. 장애는 고쳐졌으니 다시 처리할 메시지는 원래 큐로 돌려보내고, 데이터가 잘못된 메시지는 따로 보관한 뒤 지운다. DLQ 가 없는 결제 큐도 손본다.

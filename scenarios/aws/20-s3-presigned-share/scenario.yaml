@@ -1,0 +1,6 @@
+title: 외부 업체에 파일 하나만 하루 동안 공유하기 (S3 미리 서명된 URL)
+category: storage
+level: 1
+minutes: 10
+tags: [aws s3 presign, --expires-in, 미리 서명된 URL, 버킷 공개 금지]
+summary: 회계법인이 10월 정산 파일을 달라고 한다. 버킷을 공개하거나 계정을 만들어 주는 대신, 그 파일 하나만 24시간 동안 열리는 링크를 만들어 전달한다.

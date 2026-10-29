@@ -1,0 +1,6 @@
+title: 퇴사자 계정 막기 — 지우지 말고 잠그기 (IAM)
+category: security
+level: 2
+minutes: 25
+tags: [iam, delete-login-profile, update-access-key Inactive, remove-user-from-group, detach-user-policy, delete-user-policy, tag-user]
+summary: 오늘 퇴사한 두 사람의 AWS 계정을 막는다. 감사 기록 때문에 계정과 액세스 키는 지우지 않고, 콘솔 로그인·키·그룹·권한을 모두 끊어 아무것도 못 하게 만든다. 남아 있는 직원 계정은 건드리지 않는다.

@@ -16,7 +16,10 @@ RUN apt-get update \
 RUN python3 -m venv /opt/awscli && /opt/awscli/bin/pip install --no-cache-dir -q 'awscli==1.42.*' \
  && python3 -m venv /opt/moto && /opt/moto/bin/pip install --no-cache-dir -q 'moto[server]==5.0.28' \
  && ln -s /opt/awscli/bin/aws /usr/local/bin/aws \
- && ln -s /opt/awscli/bin/aws_completer /usr/local/bin/aws_completer
+ && ln -s /opt/awscli/bin/aws_completer /usr/local/bin/aws_completer \
+ && echo 'SSL_COMMON_NAMES.clear()  # cmdlab: sqs 등도 AWS_ENDPOINT_URL(가짜 AWS)을 따르게' \
+      >> "$(/opt/awscli/bin/python -c 'import awscli.customizations.overridesslcommonname as m; print(m.__file__)')"
+# ↑ AWS CLI v1 은 sqs·emr 같은 일부 서비스에서 AWS_ENDPOINT_URL 을 무시하고 옛 공식 주소로 고정한다
 
 # 실습용 가짜 AWS 계정: 모든 aws 명령이 컨테이너 안의 moto 로 간다
 ENV AWS_ENDPOINT_URL=http://127.0.0.1:5000 \

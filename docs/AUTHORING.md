@@ -165,7 +165,7 @@ Docker 환경의 시나리오는 `setup.sh` 에서 `source /usr/local/lib/lab-do
 | `sql` 확장 (JOIN, 인덱스) | 느린 쿼리 찾기, 테이블 합치기, 백업/복원 |
 | `docker` (Docker-in-Docker) | 죽은 컨테이너 로그 보기, 포트 충돌, 이미지 정리 |
 | `kubectl` (kind/k3s) | CrashLoopBackOff 원인 찾기, 스케일, 롤백 |
-| `aws` 확장 | DynamoDB 백업·복원(PITR), ELB 대상 그룹 헬스체크, VPC 엔드포인트로 NAT 비용 줄이기, KMS 키 회전, Auto Scaling 그룹 |
+| `aws` 확장 | DynamoDB 백업·복원(PITR), KMS 키 회전, Auto Scaling 그룹 용량 조정, SNS → SQS 팬아웃, EBS 스냅샷 수명 주기 |
 | `network` | `curl`, `dig`, `ss` 로 연결 문제 진단 |
 | `vim` | 파일 편집 미션 |
 | `script` 확장 | 로그 파싱 스크립트, CSV→엑셀 차트, 저장된 웹 페이지에서 정보 뽑기 |
