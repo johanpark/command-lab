@@ -1,0 +1,6 @@
+title: 관리자 권한을 가진 봇 계정 줄이기 (IAM 최소 권한)
+category: security
+level: 3
+minutes: 30
+tags: [IAM, detach-user-policy, put-user-policy, 최소 권한, "arn:aws:s3:::버킷/*"]
+summary: 보고서만 읽으면 되는 봇 계정에 AdministratorAccess 가 붙어 있다. 관리자 권한을 떼고, 버킷 하나의 목록 보기와 파일 읽기만 허용하는 정책을 만든다.

@@ -1,0 +1,6 @@
+title: 실수로 공개된 S3 버킷 찾아 막기
+category: security
+level: 2
+minutes: 25
+tags: [s3api get-bucket-policy, delete-bucket-policy, put-public-access-block, "Principal *"]
+summary: 버킷 정책에 Principal "*" 이 들어가 고객 파일이 인터넷에 공개됐다. 공개 버킷을 찾아 막되, 원래 공개여야 하는 웹사이트 버킷은 그대로 둔다.

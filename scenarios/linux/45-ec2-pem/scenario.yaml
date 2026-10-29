@@ -1,0 +1,6 @@
+title: .pem 키로 EC2 서버 접속하기
+category: ec2
+level: 2
+minutes: 20
+tags: [ssh -i, .pem, chmod 400, ec2-user, ~/.ssh/config]
+summary: AWS 에서 받은 .pem 키로 EC2 에 접속한다. UNPROTECTED PRIVATE KEY FILE 에러와 OS 마다 다른 기본 사용자 이름을 해결하고 접속 별칭을 만든다.

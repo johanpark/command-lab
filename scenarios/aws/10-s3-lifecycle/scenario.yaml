@@ -1,0 +1,6 @@
+title: 계속 쌓이는 로그 버킷 정리 규칙 (S3 수명 주기)
+category: storage
+level: 3
+minutes: 25
+tags: [put-bucket-lifecycle-configuration, Expiration, Transitions, GLACIER, Filter Prefix]
+summary: 몇 년째 쌓이는 로그 버킷에 경로별로 다른 수명 주기 규칙을 건다. 로그는 싼 저장소로 옮겼다가 지우고, 임시 파일은 빨리 지우고, 백업은 절대 자동 삭제되지 않게 한다.

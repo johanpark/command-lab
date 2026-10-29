@@ -1,0 +1,6 @@
+title: S3 에 백업 올리고 웹사이트 동기화하기
+category: storage
+level: 2
+minutes: 25
+tags: [aws s3 cp --recursive, aws s3 sync, --delete, --exclude, --dryrun]
+summary: DB 백업 폴더를 정해진 경로에 올리고, 정적 웹사이트 폴더를 버킷과 똑같이 맞춘다. 지운 파일은 버킷에서도 지우고, 초안은 올리지 않는다.

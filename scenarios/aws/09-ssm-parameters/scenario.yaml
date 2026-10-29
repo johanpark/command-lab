@@ -1,0 +1,6 @@
+title: Parameter Store 에서 설정 파일 만들기 (SSM)
+category: ops
+level: 2
+minutes: 20
+tags: [aws ssm get-parameters-by-path, --with-decryption, SecureString, basename, tr]
+summary: 운영 설정을 SSM Parameter Store 에서 한꺼번에 꺼내 .env 파일을 만든다. 암호화된 값(SecureString)을 풀지 않고 쓰는 함정과 다른 환경 값이 섞이는 함정을 피한다.

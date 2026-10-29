@@ -1,0 +1,6 @@
+title: 전 세계에 열린 SSH 포트 막기 (보안 그룹)
+category: compute
+level: 2
+minutes: 25
+tags: [보안 그룹, authorize-security-group-ingress, revoke-security-group-ingress, 0.0.0.0/0, "::/0"]
+summary: 보안 점검에서 SSH(22)와 DB(3306)가 인터넷 전체에 열려 있다고 걸렸다. IPv6 규칙까지 찾아 막고, SSH 는 사무실 IP 에서만 들어오게 한다.

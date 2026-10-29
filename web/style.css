@@ -218,7 +218,7 @@ a.btn.primary { color: var(--accent-ink); }
 .search input::-webkit-search-cancel-button { cursor: pointer; }
 
 /* 환경 탭 */
-.env-tabs { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 2px; }
+.env-tabs { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 1px; }
 .env-tab {
   display: grid;
   justify-items: center;
@@ -234,7 +234,7 @@ a.btn.primary { color: var(--accent-ink); }
 .env-tab:hover { background: var(--surface-2); color: var(--text); }
 .env-tab.active { background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 35%, transparent); color: var(--text); }
 .env-tab-icon { font-size: 19px; line-height: 1.2; }
-.env-tab-name { font-size: 11px; letter-spacing: -.01em; font-weight: 600; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.env-tab-name { font-size: 10.5px; letter-spacing: -.02em; font-weight: 600; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .env-tab-bar { width: 70%; height: 3px; background: var(--surface-3); border-radius: 9px; overflow: hidden; margin-top: 3px; }
 .env-tab-bar i { display: block; height: 100%; background: var(--ok); }
 
