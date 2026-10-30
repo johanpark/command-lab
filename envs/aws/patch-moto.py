@@ -96,3 +96,39 @@ if 'cmdlab: 실제 CloudWatch Logs' not in s:
     assert 'class EventMessageFilter' in s, 'moto logs 코드가 예상과 달라요'
     p.write_text(s + LOGS)
 print('patched', p)
+
+# S3: get-bucket-replication 이 접두사 필터·저장 클래스·삭제 마커 설정을 무시하고 늘 빈 값으로 돌려준다
+#     → 저장된 실제 값을 그대로 보여 주도록 응답 템플릿을 고친다
+p = pathlib.Path(importlib.util.find_spec('moto.s3.responses').origin)
+s = p.read_text()
+OLD_RULE = '''  <DeleteMarkerReplication>
+    <Status>Disabled</Status>
+  </DeleteMarkerReplication>
+  <Filter>
+    <Prefix></Prefix>
+  </Filter>
+  <Destination>
+    <Bucket>{{ rule["Destination"]["Bucket"] }}</Bucket>
+  </Destination>'''
+NEW_RULE = '''  {# cmdlab #}
+  <DeleteMarkerReplication>
+    <Status>{{ (rule.get("DeleteMarkerReplication") or {}).get("Status") or "Disabled" }}</Status>
+  </DeleteMarkerReplication>
+  {% if rule.get("Filter") is mapping %}
+  <Filter>
+    {% if rule["Filter"].get("And") is mapping %}<And><Prefix>{{ rule["Filter"]["And"].get("Prefix") or "" }}</Prefix></And>
+    {% else %}<Prefix>{{ rule["Filter"].get("Prefix") or "" }}</Prefix>{% endif %}
+  </Filter>
+  {% elif "Prefix" in rule %}
+  <Prefix>{{ rule["Prefix"] or "" }}</Prefix>
+  {% else %}
+  <Filter><Prefix></Prefix></Filter>
+  {% endif %}
+  <Destination>
+    <Bucket>{{ rule["Destination"]["Bucket"] }}</Bucket>
+    {% if rule["Destination"].get("StorageClass") %}<StorageClass>{{ rule["Destination"]["StorageClass"] }}</StorageClass>{% endif %}
+  </Destination>'''
+if '{# cmdlab #}' not in s:
+    assert OLD_RULE in s, 'moto s3 복제 템플릿이 예상과 달라요'
+    p.write_text(s.replace(OLD_RULE, NEW_RULE))
+print('patched', p)

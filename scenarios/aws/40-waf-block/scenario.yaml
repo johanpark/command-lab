@@ -1,0 +1,6 @@
+title: 로그인 무차별 대입 공격 막기 (WAF IP 차단·속도 제한)
+category: security
+level: 3
+minutes: 30
+tags: [wafv2 create-ip-set, create-web-acl, IPSetReferenceStatement, RateBasedStatement, associate-web-acl, get-web-acl-for-resource]
+summary: 로그인 페이지에 비밀번호 대입 공격이 쏟아진다. 공격 IP 목록으로 차단 규칙을 만들고, IP 하나가 너무 많이 요청하면 자동으로 막는 속도 제한을 걸어 로드 밸런서에 붙인다. 회사 사무실 IP 는 막으면 안 된다.
