@@ -1,0 +1,6 @@
+title: DB 포트를 앱 서버에서만 열기 (보안 그룹 참조)
+category: compute
+level: 2
+minutes: 20
+tags: [describe-security-group-rules, revoke-security-group-ingress, authorize-security-group-ingress, --source-group, 보안 그룹 체인]
+summary: DB 와 캐시 포트가 인터넷 전체와 VPC 전체에 열려 있다. IP 대역 대신 "앱 서버 보안 그룹" 을 출처로 지정해서, 앱 서버(와 관리용 bastion)만 들어올 수 있게 좁힌다.

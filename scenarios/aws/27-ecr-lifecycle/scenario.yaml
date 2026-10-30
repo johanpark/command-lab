@@ -1,0 +1,6 @@
+title: 쌓여만 가는 컨테이너 이미지 정리 (ECR 수명 주기 정책)
+category: containers
+level: 3
+minutes: 30
+tags: [ecr, describe-images, batch-delete-image, put-lifecycle-policy, tagStatus, imageCountMoreThan, sinceImagePushed]
+summary: 배포할 때마다 이미지가 쌓여 ECR 저장 요금이 계속 오른다. 태그 없는 찌꺼기 이미지는 지금 지우고, 앞으로는 수명 주기 정책이 알아서 정리하도록 규칙을 건다. 운영 중인 이미지는 절대 지워지면 안 된다.

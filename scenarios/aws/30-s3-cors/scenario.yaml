@@ -1,0 +1,6 @@
+title: 브라우저에서 S3 업로드가 CORS 에러로 막혀요 (S3 CORS)
+category: storage
+level: 2
+minutes: 20
+tags: [put-bucket-cors, get-bucket-cors, AllowedOrigins, AllowedMethods, AllowedHeaders, ExposeHeaders, 프리플라이트]
+summary: 운영 사이트에서 이미지 업로드를 누르면 브라우저 콘솔에 CORS 에러가 뜬다. 개발용으로만 설정돼 있던 버킷의 CORS 규칙을 운영 도메인에 맞게 고치되, 아무 사이트나 허용하지는 않는다.

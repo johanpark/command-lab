@@ -1,0 +1,6 @@
+title: 오래된 서버 이미지와 스냅샷 정리 (AMI 등록 해제)
+category: compute
+level: 3
+minutes: 25
+tags: [describe-images --owners self, deregister-image, delete-snapshot, InvalidSnapshot.InUse, describe-launch-template-versions]
+summary: 배포마다 만든 AMI 가 쌓여 스냅샷 요금이 나간다. 최근 3개와 지금 시작 템플릿이 쓰는 AMI 는 남기고 나머지는 등록 해제하고, 등록 해제해도 남는 스냅샷까지 지운다.
