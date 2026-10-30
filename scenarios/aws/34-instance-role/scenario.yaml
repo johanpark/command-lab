@@ -1,0 +1,6 @@
+title: 서버에 박힌 액세스 키를 IAM 역할로 바꾸기 (인스턴스 프로파일)
+category: security
+level: 3
+minutes: 30
+tags: [iam create-role, trust policy, create-instance-profile, add-role-to-instance-profile, associate-iam-instance-profile, update-access-key]
+summary: 보고서 서버의 .env 에 IAM 사용자 액세스 키가 평문으로 들어 있다. 같은 권한의 IAM 역할을 만들어 서버에 붙이고, 파일에서 키를 지우고, 그 키는 비활성화한다. 키가 유출돼도 쓸모없게 만드는 것이 목표.

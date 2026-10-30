@@ -1,0 +1,6 @@
+title: 놀고 있는 서버 줄이기 (CloudWatch 지표로 인스턴스 크기 조정)
+category: compute
+level: 3
+minutes: 30
+tags: [cloudwatch get-metric-statistics, CPUUtilization, Average, Maximum, stop-instances, modify-instance-attribute --instance-type, start-instances]
+summary: 서버 비용을 줄이라는 지시가 내려왔다. 지난 7일 CPU 지표를 보고 거의 놀고 있는 서버만 골라 한 단계 작은 타입으로 바꾼다. 평균만 보면 밤에만 바쁜 배치 서버를 잘못 줄이게 된다.

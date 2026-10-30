@@ -1,0 +1,6 @@
+title: 에러 로그가 쌓이면 알람 받기 (CloudWatch Logs 지표 필터)
+category: ops
+level: 3
+minutes: 30
+tags: [logs put-metric-filter, filter-pattern, 'JSON 필터 { $.level = "ERROR" }', put-metric-alarm, TreatMissingData]
+summary: API 로그에 에러가 쏟아져도 아무도 모른다. 로그 그룹에 지표 필터를 걸어 에러 줄 수를 지표로 만들고, 1분에 10건 넘게 3분 연속이면 알람이 울리게 한다. 단순 글자 검색은 에러가 아닌 줄까지 세게 된다.
