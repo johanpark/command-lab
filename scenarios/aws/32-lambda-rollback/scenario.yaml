@@ -1,0 +1,6 @@
+title: 배포 직후 에러 폭발, 람다 되돌리기 (Lambda 버전·별칭)
+category: serverless
+level: 3
+minutes: 25
+tags: [lambda, list-versions-by-function, update-alias, update-function-configuration, publish-version, put-function-concurrency, 환경 변수 덮어쓰기]
+summary: 방금 배포한 주문 API 람다가 잘못된 DB 주소 때문에 에러를 쏟아낸다. 별칭을 이전 정상 버전으로 돌려 급한 불을 끄고, 설정을 고친 새 버전은 스테이징 별칭으로만 내보낸다. DB 보호를 위해 동시 실행 한도도 건다.

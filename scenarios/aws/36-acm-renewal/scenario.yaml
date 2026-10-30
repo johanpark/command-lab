@@ -1,0 +1,6 @@
+title: 인증서 만료 12일 전! 찾아서 교체하기 (ACM)
+category: security
+level: 2
+minutes: 25
+tags: [acm list-certificates, describe-certificate, NotAfter, InUseBy, import-certificate --certificate-arn, delete-certificate]
+summary: 사이트 인증서가 곧 만료된다는 메일이 왔다. 30일 안에 만료되는 인증서를 모두 찾고, 업체에서 받은 새 인증서를 같은 ARN 에 다시 가져와 로드 밸런서 설정을 건드리지 않고 교체한다. 안 쓰는 인증서는 지운다.
