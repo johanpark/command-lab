@@ -73,6 +73,7 @@ function renderMarkdown(md) {
       if (/^#{1,6}\s/.test(line)) return c.bold(c.cyan(line.replace(/^#+\s*/, '')));
       if (/^\|?\s*-{3,}/.test(line)) return null;
       return line
+        .replace(/\\\|/g, '|') // 표 안 코드의 파이프(\|)는 터미널에선 그냥 | 로 보여야 복사해 쓸 수 있다
         .replace(/^>\s?/, '  ')
         .replace(/`([^`]+)`/g, (_, code) => c.yellow(code)).replace(/\*\*([^*]+)\*\*/g, (_, b) => c.bold(b));
     })
