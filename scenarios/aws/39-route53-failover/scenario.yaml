@@ -1,0 +1,6 @@
+title: 서버가 죽으면 예비 서버로 자동 전환 (Route 53 헬스 체크·장애 조치)
+category: compute
+level: 3
+minutes: 30
+tags: [route53 create-health-check, get-health-check, change-resource-record-sets, Failover PRIMARY/SECONDARY, SetIdentifier, DELETE + CREATE]
+summary: API 서버가 한 번 죽으면 사람이 DNS 를 바꿀 때까지 서비스가 멈춘다. 운영 서버에 헬스 체크를 걸고, api 레코드를 장애 조치(PRIMARY/SECONDARY) 쌍으로 바꿔서 운영 서버가 죽으면 다른 리전의 예비 서버로 자동으로 넘어가게 한다.

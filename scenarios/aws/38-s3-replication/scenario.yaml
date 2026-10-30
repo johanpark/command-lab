@@ -1,0 +1,6 @@
+title: 서울 리전이 멈춰도 주문 기록은 남게 (S3 교차 리전 복제)
+category: storage
+level: 3
+minutes: 25
+tags: [put-bucket-versioning, put-bucket-replication, 복제 규칙, Filter Prefix, StorageClass, DeleteMarkerReplication, IAM 역할]
+summary: 재해 대비 감사에서 "주문 기록이 한 리전에만 있다" 는 지적을 받았다. 다른 리전의 DR 버킷으로 주문 파일만 자동 복제되게 하고, 실수로 지운 것은 복제되지 않게 하며, 싼 저장 클래스로 보관한다.

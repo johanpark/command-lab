@@ -1,0 +1,6 @@
+title: 디스크 요금 20% 줄이기 (EBS gp2 → gp3 전환)
+category: compute
+level: 2
+minutes: 20
+tags: [describe-volumes, --filters volume-type, modify-volume --volume-type gp3, describe-volumes-modifications, --query sum]
+summary: 같은 성능에 더 싼 gp3 가 나왔는데 아직 모든 디스크가 gp2 다. 서버를 멈추지 않고 gp2 볼륨을 gp3 로 바꾸되 보류 표시가 있는 것과 DB 전용 고성능 디스크는 그대로 두고, 한 달에 얼마 아끼는지 계산한다.

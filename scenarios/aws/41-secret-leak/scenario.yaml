@@ -1,0 +1,6 @@
+title: DB 비밀번호가 슬랙에 올라갔어요 — 긴급 교체 (Secrets Manager·RDS)
+category: security
+level: 3
+minutes: 25
+tags: [secretsmanager get-random-password, get-secret-value, put-secret-value, AWSCURRENT, AWSPREVIOUS, rds modify-db-instance --master-user-password]
+summary: 운영 DB 비밀번호가 담긴 화면 캡처가 사내 메신저에 올라갔다. 안전한 새 비밀번호를 만들어 DB 와 Secrets Manager 를 같이 바꾸되, 다른 접속 정보는 그대로 두고, 옛 비밀번호는 이전 버전으로만 남게 한다.
