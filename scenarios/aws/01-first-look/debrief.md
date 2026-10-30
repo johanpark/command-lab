@@ -32,4 +32,4 @@ aws ec2 describe-instances --filters ... --query ... --output table
 | `text` | 셸 스크립트에서 `for id in $(...)` 로 쓰기 |
 
 ## 진짜 AWS 에서는
-`aws configure` 로 접속 키와 리전을 설정하고, 여러 계정은 `--profile 이름` 으로 바꿔 가며 써요. 요즘은 장기 접속 키 대신 `aws sso login` 이나 EC2 의 IAM 역할(키 없이 권한)을 권장해요.
+`aws configure` 로 접속 키와 리전을 설정하고, 여러 계정은 `--profile 이름` 으로 바꿔 가며 써요. 요즘은 장기 접속 키 대신 `aws sso login`(CLI v2) 이나 EC2 의 IAM 역할(키 없이 권한)을 권장해요.

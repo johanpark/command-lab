@@ -24,7 +24,7 @@ for i in $(seq 0 14); do
   if [ $i = 14 ]; then push shop-api 1 release-1.$i prod; else push shop-api $age release-1.$i; fi
 done
 # 개발 브랜치 이미지
-for a in 2 6 10 13 15 21 30 45; do push shop-api $a "dev-$(printf %06x $((RANDOM * a)))"; done
+n=0; for a in 2 6 10 13 15 21 30 45; do n=$((n + 1)); push shop-api $a "dev-$(printf %04x%02d $RANDOM $n)"; done   # 끝 두 자리로 겹치지 않게
 # 태그 없는 찌꺼기 (같은 태그로 다시 push 하면 이전 이미지는 태그를 잃는다)
 for a in 0 3 8 17 26 40; do push shop-api $a; done
 push shop-web 3 release-2.0
