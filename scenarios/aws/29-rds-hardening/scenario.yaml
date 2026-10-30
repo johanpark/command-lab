@@ -1,0 +1,6 @@
+title: 운영 DB 점검 — 공개 접속 끄고 백업 켜기 (RDS)
+category: database
+level: 2
+minutes: 20
+tags: [rds describe-db-instances, create-db-snapshot, modify-db-instance, PubliclyAccessible, BackupRetentionPeriod, DeletionProtection]
+summary: 급하게 만든 운영 DB 가 인터넷에 공개돼 있고, 자동 백업도 꺼져 있고, 실수로 지울 수도 있는 상태다. 작업 전에 스냅샷부터 뜨고, 공개 접속을 끄고, 자동 백업과 삭제 방지를 켠다.

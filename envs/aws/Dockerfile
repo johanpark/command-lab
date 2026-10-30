@@ -37,6 +37,9 @@ RUN (userdel -r ubuntu 2>/dev/null || true) \
  && printf '%s\n' 'set nocompatible' 'set backspace=indent,eol,start' 'set ruler' 'set showmode' >> /etc/vim/vimrc.tiny \
  && printf '%s\n' 'set nocompatible' 'set backspace=indent,eol,start' 'set ruler' 'set showmode' >> /etc/vim/vimrc
 
+COPY patch-moto.py /tmp/patch-moto.py
+RUN /opt/moto/bin/python /tmp/patch-moto.py && rm /tmp/patch-moto.py
+
 COPY lab-aws.sh /usr/local/lib/lab-aws.sh
 COPY start-moto.sh /usr/local/bin/start-moto
 RUN chmod +x /usr/local/bin/start-moto

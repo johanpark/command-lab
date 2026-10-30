@@ -15,10 +15,12 @@ aws autoscaling create-auto-scaling-group --auto-scaling-group-name batch-asg --
 aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names batch-asg \
   --query 'AutoScalingGroups[0].[MinSize,MaxSize,DesiredCapacity]' --output text > /opt/cmdlab/secret/batch
 N=$(rand_pick 4 5 6); X=$(rand_pick 12 15 20); C=$(rand_pick 50 60); E=$(rand_pick 01 02 03)
-secret_set n "$N"; secret_set x "$X"; secret_set c "$C"; secret_set e "$E"
+# 세일은 내일, 끝나는 건 모레 새벽 (한국 시간 기준, 실습하는 날에 맞춘다)
+D=$(TZ=Asia/Seoul date -d "+2 day" +%F)
+secret_set n "$N"; secret_set x "$X"; secret_set c "$C"; secret_set e "$E"; secret_set day "$D"
 mkdir -p "$H"
 cat > "$H/sale-plan.md" <<MD
-# 11.11 세일 인프라 계획 (web-asg)
+# 내일 대형 세일 인프라 계획 (web-asg)
 
 평소: 최소 2 / 원하는 2 / 최대 4
 
@@ -29,7 +31,7 @@ cat > "$H/sale-plan.md" <<MD
    - 그룹 평균 CPU 사용률 **$C%** 유지
 3. 세일 끝나면 원래대로
    - 예약 작업 이름 \`after-sale\`
-   - **한국 시간 2026-11-12 $E:00** 에 최소 2 / 원하는 2 / 최대 4 로
+   - **한국 시간 $D $E:00** 에 최소 2 / 원하는 2 / 최대 4 로
 
 ※ batch-asg 는 이번 세일과 상관없음. 건드리지 말 것.
 MD
