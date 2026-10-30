@@ -1,0 +1,6 @@
+title: 지워진 상품만 백업에서 되살리기 (DynamoDB 백업 복원)
+category: database
+level: 3
+minutes: 30
+tags: [dynamodb, list-backups, restore-table-from-backup, scan, put-item, 차집합 비교, point-in-time recovery]
+summary: 정리 스크립트 버그로 상품 몇 개가 지워졌다. 어젯밤 백업을 새 테이블로 복원해 비교하고, 지워진 상품만 되돌려 넣는다. 오늘 바뀐 가격과 새로 등록된 상품은 지키고, 다음을 위해 시점 복구(PITR)도 켠다.

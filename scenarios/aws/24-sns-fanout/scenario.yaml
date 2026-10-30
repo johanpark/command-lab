@@ -1,0 +1,6 @@
+title: 주문 이벤트를 여러 팀에 나눠 보내기 (SNS → SQS 팬아웃, 필터)
+category: messaging
+level: 3
+minutes: 30
+tags: [sns subscribe, protocol sqs, RawMessageDelivery, FilterPolicy, SQS 큐 정책, aws:SourceArn]
+summary: 주문 이벤트 하나를 재고팀과 메일팀 큐가 각자 받아야 한다. SNS 토픽에 두 큐를 구독시키되, 재고팀은 원본 그대로, 메일팀은 결제·배송 이벤트만 받게 필터를 건다. 큐가 SNS 메시지를 받을 수 있도록 큐 정책도 연다.
