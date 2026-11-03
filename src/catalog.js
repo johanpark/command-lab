@@ -119,6 +119,44 @@ export function readScenarioDocs(scenario) {
   };
 }
 
+// 함정·변형 테스트 (traps/*.sh, *.ps1): 맨 위 '#' 주석 줄에 기대 결과를 적는다.
+//   # 설명: 무엇을 확인하는지
+//   # 모범 풀이 먼저          ← (선택) 모범 풀이를 실행한 뒤 이 스크립트를 실행
+//   # 실패해야: 문구          ← 채점 출력에 이 문구가 든 ✘ 줄이 있어야 한다 (여러 줄 가능)
+//   # 통과해야               ← 다르게 풀어도 맞는 풀이: 채점이 통과해야 한다
+export const TRAP_EXTS = ['.sh', '.ps1'];
+
+export function parseTrap(file) {
+  const text = fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n');
+  const trap = { name: path.basename(file), file, desc: '', afterSolution: false, mustFail: [], mustPass: false, problems: [] };
+  for (const line of text.split('\n')) {
+    if (line.startsWith('#!')) continue;
+    if (!line.startsWith('#')) break;
+    const body = line.replace(/^#\s?/, '').trim();
+    let m;
+    if ((m = body.match(/^설명:\s*(.+)$/))) trap.desc = m[1];
+    else if (body === '모범 풀이 먼저') trap.afterSolution = true;
+    else if ((m = body.match(/^실패해야:\s*(.+)$/))) trap.mustFail.push(m[1]);
+    else if (body === '통과해야') trap.mustPass = true;
+  }
+  trap.code = text;
+  if (!trap.desc) trap.problems.push('# 설명: 줄이 없습니다');
+  if (trap.mustPass === Boolean(trap.mustFail.length)) {
+    trap.problems.push('# 실패해야: 문구 와 # 통과해야 중 하나만 있어야 합니다');
+  }
+  return trap;
+}
+
+export function loadTraps(scenario) {
+  const dir = path.join(scenario.dir, 'traps');
+  if (!fs.existsSync(dir)) return [];
+  return fs
+    .readdirSync(dir)
+    .filter((f) => TRAP_EXTS.includes(path.extname(f)))
+    .sort()
+    .map((f) => parseTrap(path.join(dir, f)));
+}
+
 // "linux/03" 처럼 일부만 입력해도 하나로 특정되면 찾아준다.
 export function findScenario(scenarios, query) {
   if (!query) return { error: '시나리오 ID를 입력하세요.' };
@@ -159,6 +197,14 @@ export function validateCatalog() {
       if (fs.existsSync(p) && fs.readFileSync(p, 'utf8').includes('\r\n')) {
         problems.push(`${s.id}: ${f}에 CRLF 줄바꿈이 있습니다.`);
       }
+    }
+    const solution = TRAP_EXTS.map((e) => `solution${e}`).find((f) => fs.existsSync(path.join(s.dir, f)));
+    for (const t of loadTraps(s)) {
+      t.problems.forEach((p) => problems.push(`${s.id}: traps/${t.name}: ${p}`));
+      if (solution && path.extname(t.name) !== path.extname(solution)) {
+        problems.push(`${s.id}: traps/${t.name}: 모범 풀이(${solution})와 같은 종류(${path.extname(solution)})여야 합니다.`);
+      }
+      if (t.afterSolution && !solution) problems.push(`${s.id}: traps/${t.name}: '모범 풀이 먼저' 인데 solution 파일이 없습니다.`);
     }
   }
   return { envs, scenarios, problems };

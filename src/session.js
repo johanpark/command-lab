@@ -1,7 +1,7 @@
 // CLI와 웹 서버가 함께 쓰는 실습 세션 로직: 시작 → (사용자 실습) → 채점 → 정리
 import fs from 'node:fs';
 import path from 'node:path';
-import { findScenario, loadCatalog } from './catalog.js';
+import { findScenario, loadCatalog, loadTraps } from './catalog.js';
 import {
   LAB_ROOT,
   containerName,
@@ -105,34 +105,79 @@ export async function checkScenario(catalog, scenario) {
 }
 
 // 모범 풀이 파일과 그것을 실행할 명령. 셸 종류마다 하나씩 추가하면 된다.
+// strict: 모범 풀이는 중간 명령이 하나라도 실패하면 멈춘다. 함정 스크립트는 일부러 실패하는 명령도 있어서 끝까지 간다.
 const SOLUTION_RUNNERS = [
   // 학습자의 로그인 셸(lib/profile.sh)과 같은 umask 로 실행한다 (docker exec 기본값은 0000)
-  ['solution.sh', (code) => ['bash', '-e', '-c', `umask 022\n${code}`]],
-  ['solution.ps1', (code) => ['pwsh', '-NoLogo', '-NoProfile', '-NonInteractive', '-Command', `$ErrorActionPreference = 'Stop'\n${code}`]],
+  ['solution.sh', (code, strict = true) => ['bash', ...(strict ? ['-e'] : []), '-c', `umask 022\n${code}`]],
+  ['solution.ps1', (code, strict = true) => [
+    'pwsh', '-NoLogo', '-NoProfile', '-NonInteractive', '-Command',
+    `$ErrorActionPreference = '${strict ? 'Stop' : 'Continue'}'\n${code}`,
+  ]],
 ];
 
+function runAsLearner(container, env, cmd) {
+  return execCapture(container, cmd, {
+    user: env.user,
+    workdir: env.workdir,
+    env: [`HOME=${env.home ?? `/home/${env.user}`}`, `USER=${env.user}`],
+  });
+}
+
+const failedLines = (out) => out.split('\n').filter((l) => l.startsWith('✘')).map((l) => l.slice(1).trim());
+
+// 함정·변형 하나: 새 컨테이너 → (모범 풀이) → 함정 스크립트 → 채점 → 기대와 비교
+export async function runTrap(catalog, scenario, trap, { onLog } = {}) {
+  const [solutionName, toCmd] = SOLUTION_RUNNERS.find(([file]) => fs.existsSync(path.join(scenario.dir, file)));
+  const env = envFor(catalog, scenario);
+  const { container } = await startScenario(catalog, scenario, { onLog, record: false });
+  try {
+    const log = [];
+    if (trap.afterSolution) {
+      const sol = await runAsLearner(container, env, toCmd(fs.readFileSync(path.join(scenario.dir, solutionName), 'utf8')));
+      log.push(`--- ${solutionName} ---`, sol.stdout + sol.stderr);
+      if (sol.exitCode !== 0) return { ok: false, why: `${solutionName} 실패`, output: log.join('\n') };
+    }
+    const run = await runAsLearner(container, env, toCmd(trap.code, false));
+    log.push(`--- traps/${trap.name} ---`, run.stdout + run.stderr);
+    const res = await runCheck(container, scenario, env);
+    const out = res.stdout + res.stderr;
+    log.push('--- check ---', out);
+    const failed = failedLines(out);
+    let why = '';
+    if (trap.mustPass) {
+      if (res.exitCode !== 0) why = `통과해야 하는데 실패: ${failed.join(' / ') || '(✘ 줄 없음)'}`;
+    } else if (res.exitCode === 0) {
+      why = '실패해야 하는데 통과함';
+    } else {
+      const missing = trap.mustFail.filter((m) => !failed.some((l) => l.includes(m)));
+      if (missing.length) why = `실패 줄에 없음: ${missing.join(', ')} (실제 실패: ${failed.join(' / ') || '없음'})`;
+    }
+    return { ok: !why, why, output: log.join('\n') };
+  } finally {
+    await stopScenario(scenario);
+  }
+}
+
 // 시나리오 자체 검증: 풀기 전엔 채점 실패, 모범 풀이(solution.*) 실행 후엔 통과해야 한다.
-// 학습 기록은 남기지 않는다.
-export async function testScenario(catalog, scenario, { onLog } = {}) {
+// 그다음 traps/ 의 함정은 기대한 줄에서 실패하고, 변형은 통과해야 한다. 학습 기록은 남기지 않는다.
+export async function testScenario(catalog, scenario, { onLog, traps = true, onTrap } = {}) {
   const runner = SOLUTION_RUNNERS.find(([file]) => fs.existsSync(path.join(scenario.dir, file)));
   if (!runner) return { skipped: true };
   const [solutionName, toCmd] = runner;
   const env = envFor(catalog, scenario);
   const { container } = await startScenario(catalog, scenario, { onLog, record: false });
+  let result;
   try {
     const before = await runCheck(container, scenario, env);
     const code = fs.readFileSync(path.join(scenario.dir, solutionName), 'utf8');
-    const solution = await execCapture(container, toCmd(code), {
-      user: env.user,
-      workdir: env.workdir,
-      env: [`HOME=${env.home ?? `/home/${env.user}`}`, `USER=${env.user}`],
-    });
+    const solution = await runAsLearner(container, env, toCmd(code));
     const after = await runCheck(container, scenario, env);
-    return {
+    result = {
       ok: before.exitCode !== 0 && solution.exitCode === 0 && after.exitCode === 0,
       beforeFailed: before.exitCode !== 0,
       solutionOk: solution.exitCode === 0,
       afterPassed: after.exitCode === 0,
+      traps: [],
       output: [
         '--- check (풀기 전) ---', before.stdout + before.stderr,
         `--- ${solutionName} ---`, solution.stdout + solution.stderr,
@@ -142,6 +187,21 @@ export async function testScenario(catalog, scenario, { onLog } = {}) {
   } finally {
     await stopScenario(scenario);
   }
+  if (result.ok && traps) {
+    for (const trap of loadTraps(scenario)) {
+      let r;
+      try {
+        r = await runTrap(catalog, scenario, trap, { onLog });
+      } catch (err) {
+        r = { ok: false, why: err.message, output: '' };
+      }
+      const item = { name: trap.name, desc: trap.desc, ...r };
+      result.traps.push(item);
+      onTrap?.(item);
+    }
+    result.ok = result.traps.every((t) => t.ok);
+  }
+  return result;
 }
 
 export async function stopScenario(scenario) {

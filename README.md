@@ -158,7 +158,7 @@ lab check ──▶ check.sh (root: 결과 상태 검사, ✔/✘ 출력, 종료
 
 - **새 시나리오**: `scenarios/<환경>/<번호-이름>/` 폴더에 `scenario.yaml`, `task.md`, `setup.sh`, `check.sh`(+ `hints.md`, `debrief.md`, `solution.sh`)
 - **새 환경**: `envs/<이름>/` 폴더에 `Dockerfile`, `env.yaml`
-- **검증**: `lab validate` (구조 검사), `lab test <시나리오>` (풀기 전엔 실패, 모범 풀이 후엔 통과하는지 자동 확인)
+- **검증**: `lab validate` (구조 검사), `lab test <시나리오>` (풀기 전엔 실패, 모범 풀이 후엔 통과, `traps/` 의 틀린 풀이는 기대한 이유로 실패하는지 자동 확인)
 
 ## 문제 해결
 

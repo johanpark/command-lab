@@ -55,7 +55,7 @@ ${c.bold('기록 / 관리')}
   lab envs                 환경(연습할 CLI 종류) 목록
   lab build [환경|--all]   환경 이미지 미리 빌드 (--no-cache)
   lab validate             시나리오 파일 구조 검사
-  lab test [시나리오|환경]  모범 풀이로 시나리오 자동 검증 (시나리오 작성자용)
+  lab test [시나리오|환경...] 모범 풀이·함정(traps/)으로 시나리오 자동 검증 (작성자용, --no-traps)
 
 시나리오는 ID 일부만 써도 됩니다. 예) lab start linux/01
 `;
@@ -339,24 +339,38 @@ async function main() {
       return;
     }
     case 'test': {
-      const q = positional[0];
-      const targets = !q
-        ? catalog.scenarios
-        : catalog.envs.some((e) => e.id === q)
-          ? catalog.scenarios.filter((s) => s.env === q)
-          : [await resolveScenario(catalog, q)];
+      // 대상: 없으면 전체, 환경 ID 면 그 환경 전체, 아니면 시나리오 (여러 개 섞어 쓸 수 있음)
+      const targets = [];
+      for (const q of positional.length ? positional : [null]) {
+        const add = !q
+          ? catalog.scenarios
+          : catalog.envs.some((e) => e.id === q)
+            ? catalog.scenarios.filter((s) => s.env === q)
+            : [await resolveScenario(catalog, q)];
+        for (const s of add) if (!targets.includes(s)) targets.push(s);
+      }
       let failed = 0;
       for (const s of targets) {
         process.stdout.write(`${s.id.padEnd(32)} `);
         try {
-          const r = await testScenario(catalog, s);
+          const detail = flags.verbose || targets.length === 1;
+          const r = await testScenario(catalog, s, { traps: !flags['no-traps'] });
+          const bad = (r.traps ?? []).filter((t) => !t.ok);
+          const trapNote = r.traps?.length ? ` · 함정 ${r.traps.length - bad.length}/${r.traps.length}` : '';
           if (r.skipped) console.log(c.dim('건너뜀 (solution.sh/.ps1 없음)'));
-          else if (r.ok) console.log(c.green('✔ 통과'));
-          else {
+          else if (r.ok) console.log(c.green(`✔ 통과${trapNote}`));
+          else if (bad.length) {
+            failed++;
+            console.log(c.red(`✘ 함정 테스트 실패${trapNote}`));
+            for (const t of bad) {
+              console.log(c.red(`    ✘ traps/${t.name} (${t.desc}): ${t.why}`));
+              if (detail) console.log(c.dim(t.output.replace(/^/gm, '      ')));
+            }
+          } else {
             failed++;
             const why = !r.beforeFailed ? '풀기 전에도 채점이 통과함' : !r.solutionOk ? 'solution.sh 실패' : '풀이 후 채점 실패';
             console.log(c.red(`✘ ${why}`));
-            if (flags.verbose || targets.length === 1) console.log(c.dim(r.output));
+            if (detail) console.log(c.dim(r.output));
           }
         } catch (err) {
           failed++;

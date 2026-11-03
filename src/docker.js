@@ -145,9 +145,11 @@ export async function listLabContainers() {
   }));
 }
 
-async function packDir(dir) {
+async function packDir(dir, { exclude = [] } = {}) {
   const chunks = [];
   const stream = tar.pack(dir, {
+    // traps/ 같은 작성자용 파일은 컨테이너에 넣지 않는다 (학습자가 오답 목록을 볼 수 있으므로)
+    ignore: (name) => exclude.some((x) => path.relative(dir, name).split(path.sep)[0] === x),
     map: (header) => ({ ...header, uid: 0, gid: 0, uname: 'root', gname: 'root' }),
   });
   for await (const chunk of stream) chunks.push(chunk);
@@ -180,7 +182,7 @@ export async function createLabContainer({ scenario, env }) {
   await container.start();
   await execCapture(container, ['mkdir', '-p', `${LAB_ROOT}/lib`, `${LAB_ROOT}/scenario`]);
   await container.putArchive(await packDir(LIB_DIR), { path: `${LAB_ROOT}/lib` });
-  await container.putArchive(await packDir(scenario.dir), { path: `${LAB_ROOT}/scenario` });
+  await container.putArchive(await packDir(scenario.dir, { exclude: ['traps'] }), { path: `${LAB_ROOT}/scenario` });
   return container;
 }
 

@@ -10,10 +10,9 @@ find "$L/lib" "$L/scenario" -type f \( -name '*.sh' -o -name '*.md' -o -path "$L
 
 chmod 755 "$L" "$L/lib" "$L/lib/bin" "$L/scenario"
 chmod 755 "$L"/lib/bin/*
-# 정답/채점 로직은 학습자에게 보이지 않게
-for f in setup.sh check.sh solution.sh solution.ps1 debrief.md; do
-  if [ -e "$L/scenario/$f" ]; then chmod 600 "$L/scenario/$f"; fi
-done
+# 정답/채점 로직(setup·check·solution·해설·채점 도우미 *.py 등)은 학습자에게 보이지 않게.
+# 학습자가 읽는 건 문제(task.md)와 힌트(hints.md, hint 명령) 뿐이다.
+find "$L/scenario" -mindepth 1 -maxdepth 1 ! -name task.md ! -name hints.md -exec chmod -R go-rwx {} +
 
 mkdir -p "$L/run" "$L/secret"
 chmod 1777 "$L/run"
