@@ -56,6 +56,7 @@ const state = {
   ws: null,
   busy: false,
   fontSize: store.get('fontSize', 14),
+  sideHidden: store.get('sideHidden', false), // 넓은 화면에서 사이드바를 접었는지
 };
 
 // ---------------- 공통 ----------------
@@ -287,17 +288,37 @@ $('#search').addEventListener('keydown', (e) => {
   if (e.key === 'Enter') $('.tree .item')?.click();
 });
 
+// 좁은 화면: 사이드바가 화면 위로 미끄러져 나오는 서랍. 넓은 화면: 접어서 터미널을 넓게 쓴다
+const narrow = () => matchMedia('(max-width: 900px)').matches;
+function syncMenuBtn() {
+  const shown = narrow() ? $('#sidebar').classList.contains('open') : !state.sideHidden;
+  $('#menu-btn').setAttribute('aria-expanded', String(shown));
+  $('#menu-btn').setAttribute('aria-label', shown ? '시나리오 목록 접기' : '시나리오 목록 펴기');
+  $('#menu-btn').title = `${shown ? '시나리오 목록 접기' : '시나리오 목록 펴기'} ([)`;
+}
+function setSideHidden(hidden) {
+  state.sideHidden = hidden;
+  store.set('sideHidden', hidden);
+  $('.layout').classList.toggle('side-hidden', hidden);
+  syncMenuBtn();
+}
 function openSidebar() {
   $('#sidebar').classList.add('open');
   $('#scrim').hidden = false;
-  $('#menu-btn').setAttribute('aria-expanded', 'true');
+  syncMenuBtn();
 }
 function closeSidebar() {
   $('#sidebar').classList.remove('open');
   $('#scrim').hidden = true;
-  $('#menu-btn').setAttribute('aria-expanded', 'false');
+  syncMenuBtn();
 }
-$('#menu-btn').addEventListener('click', () => ($('#sidebar').classList.contains('open') ? closeSidebar() : openSidebar()));
+function toggleSidebar() {
+  if (narrow()) $('#sidebar').classList.contains('open') ? closeSidebar() : openSidebar();
+  else setSideHidden(!state.sideHidden);
+}
+$('#menu-btn').addEventListener('click', toggleSidebar);
+setSideHidden(state.sideHidden);
+matchMedia('(max-width: 900px)').addEventListener('change', syncMenuBtn);
 $('#scrim').addEventListener('click', closeSidebar);
 
 // ---------------- 홈 ----------------
@@ -1039,8 +1060,11 @@ document.addEventListener('keydown', (e) => {
   if (typing) return; // 터미널(textarea)이나 검색창에 입력 중이면 아래 단축키는 쓰지 않는다
   if (e.key === '/') {
     e.preventDefault();
-    if (matchMedia('(max-width: 900px)').matches) openSidebar();
+    if (narrow()) openSidebar();
+    else if (state.sideHidden) setSideHidden(false);
     $('#search').focus();
+  } else if (e.key === '[') {
+    toggleSidebar();
   } else if (e.key === '?') {
     $('#help-dialog').showModal();
   } else if (e.altKey && e.key === 'ArrowLeft') {
