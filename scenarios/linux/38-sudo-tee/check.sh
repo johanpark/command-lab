@@ -13,4 +13,7 @@ if [ -f "$M" ] && [ "$(tr -d '\r' < "$M" | sed -e 's/[[:space:]]*$//' -e '/^$/d'
 else fail "maintenance.conf 내용이 정확하다 ($( [ -f "$M" ] && echo '내용이 달라요' || echo '파일이 없어요'))"; fi
 own=$(stat -c %U "$F" "$M" 2>/dev/null | sort -u | tr '\n' ' ')
 [ "$own" = "root " ] && pass "두 파일 모두 root 소유다" || fail "두 파일 모두 root 소유다 (지금: ${own:-없음})"
+# chmod 666 으로 열어 놓고 sudo 없이 쓰면 "되긴" 하지만, 아무나 허용 목록을 고칠 수 있게 된다
+loose=""; for f in "$F" "$M"; do m=$(stat -c %a "$f" 2>/dev/null) && [ $(( 8#$m & 8#022 )) -ne 0 ] && loose+="${f##*/}($m) "; done
+[ -z "$loose" ] && pass "두 파일 모두 root 만 쓸 수 있다" || fail "두 파일 모두 root 만 쓸 수 있다 (지금: ${loose% } — chmod 로 열지 말고 sudo tee 로 쓰세요. 되돌리기: sudo chmod 644 파일)"
 finish
