@@ -1,0 +1,6 @@
+title: 안 쓰는 고정 IP 요금 줄이기 (Elastic IP 정리)
+category: compute
+level: 2
+minutes: 20
+tags: [describe-addresses, release-address, disassociate-address, AssociationId, InvalidIPAddress.InUse, NAT 게이트웨이]
+summary: 퍼블릭 IPv4 주소는 시간당 요금이 붙는다. 어디에도 연결되지 않은 Elastic IP 를 반납하고, 폐기할 서버의 주소는 연결을 끊은 뒤 반납한다. 파트너 방화벽에 등록된 주소와 NAT 게이트웨이 주소는 지킨다.

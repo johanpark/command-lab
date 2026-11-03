@@ -1,0 +1,6 @@
+title: 외부 감사 업체에 키 대신 역할 주기 (교차 계정 AssumeRole·외부 ID)
+category: security
+level: 3
+minutes: 25
+tags: [iam create-role, AssumeRolePolicyDocument, sts:ExternalId, SecurityAudit, max-session-duration, update-access-key]
+summary: 외부 보안 감사 업체가 우리 계정을 점검해야 한다. 오래 사는 액세스 키 대신, 업체 계정만 외부 ID 를 알고 있을 때 맡을 수 있는 읽기 전용 감사 역할을 만들고, 예전에 준 키는 끈다.

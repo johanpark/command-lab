@@ -1,0 +1,6 @@
+title: DB 백업을 한 곳에서 관리하기 (AWS Backup 계획·보관 기간·콜드 스토리지)
+category: database
+level: 3
+minutes: 30
+tags: [backup create-backup-vault, create-backup-plan, update-backup-plan, ScheduleExpression, ScheduleExpressionTimezone, MoveToColdStorageAfterDays, DeleteAfterDays]
+summary: 서비스마다 제각각이던 백업을 AWS Backup 계획 하나로 모은다. 매일 새벽 3시(한국)·35일 보관, 매달 1일 새벽 3시·30일 뒤 콜드 스토리지·1년 보관. 한국 시간과 UTC 차이, 콜드 스토리지 최소 기간을 지켜야 한다.
