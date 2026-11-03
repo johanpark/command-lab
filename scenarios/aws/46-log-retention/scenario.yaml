@@ -1,0 +1,6 @@
+title: 영원히 쌓이는 로그 요금 줄이기 (CloudWatch Logs 보존 기간)
+category: ops
+level: 2
+minutes: 20
+tags: [logs describe-log-groups, put-retention-policy, delete-log-group, retentionInDays, lambda list-functions]
+summary: 로그 그룹이 모두 "만료 안 함" 이라 저장 요금이 매달 늘어난다. 경로별로 보존 기간을 걸고, 감사 로그는 줄이지 않으며, 이미 지워진 람다 함수의 로그 그룹은 정리한다.

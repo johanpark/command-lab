@@ -165,7 +165,7 @@ Docker 환경의 시나리오는 `setup.sh` 에서 `source /usr/local/lib/lab-do
 | `sql` 확장 (JOIN, 인덱스) | 느린 쿼리 찾기, 테이블 합치기, 백업/복원 |
 | `docker` (Docker-in-Docker) | 죽은 컨테이너 로그 보기, 포트 충돌, 이미지 정리 |
 | `kubectl` (kind/k3s) | CrashLoopBackOff 원인 찾기, 스케일, 롤백 |
-| `aws` 확장 | Elastic IP 정리, 교차 계정 역할(AssumeRole), S3 Object Lock, Organizations SCP, Backup 계획 (CloudFormation·Step Functions·CloudTrail 은 가짜 AWS 지원이 약해 보류) |
+| `aws` 확장 | Config 규칙, Systems Manager Run Command, Transit Gateway, Cost Explorer 이상 탐지 (CloudFormation·Step Functions·CloudTrail·S3 Object Lock 은 가짜 AWS 지원이 약해 보류) |
 | `network` | `curl`, `dig`, `ss` 로 연결 문제 진단 |
 | `vim` | 파일 편집 미션 |
 | `script` 확장 | 로그 파싱 스크립트, CSV→엑셀 차트, 저장된 웹 페이지에서 정보 뽑기 |

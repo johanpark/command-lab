@@ -150,3 +150,106 @@ if '# cmdlab' not in s:
     assert OLD_ADD in s, 'moto 지표 필터 코드가 예상과 달라요'
     p.write_text(s.replace(OLD_ADD, NEW_ADD))
 print('patched', p)
+
+# EC2: 연결된 Elastic IP 도 release-address 로 바로 반납된다 (실제 AWS 는 InvalidIPAddress.InUse 로 거부)
+#      → NAT 게이트웨이·운영 서버의 주소를 "안 쓰는 것" 으로 착각해 반납해도 아무 경고 없이 사라짐
+p = pathlib.Path(importlib.util.find_spec('moto.ec2.models.elastic_ip_addresses').origin)
+s = p.read_text()
+EIP = '''
+
+# --- cmdlab: 연결된 주소는 반납 거부 (실제 AWS 처럼) ---
+_cl_orig_release_address = ElasticAddressBackend.release_address
+
+
+def _cl_release_address(self, address=None, allocation_id=None):
+    from ..exceptions import EC2ClientError
+    eips = self.address_by_ip([address]) if address else self.address_by_allocation([allocation_id]) if allocation_id else []
+    if eips and (eips[0].association_id or eips[0].instance or eips[0].eni):
+        raise EC2ClientError('InvalidIPAddress.InUse', f'Address {allocation_id or address} is in use.')
+    return _cl_orig_release_address(self, address=address, allocation_id=allocation_id)
+
+
+ElasticAddressBackend.release_address = _cl_release_address
+'''
+if 'cmdlab: 연결된 주소는' not in s:
+    assert 'def release_address' in s, 'moto EIP 코드가 예상과 달라요'
+    p.write_text(s + EIP)
+print('patched', p)
+
+# CloudWatch Logs: put-retention-policy 가 아무 숫자나 받는다 (실제 AWS 는 정해진 값만: 1, 3, 5, 7, 14, 30, ...)
+p = pathlib.Path(importlib.util.find_spec('moto.logs.models').origin)
+s = p.read_text()
+RET = '''
+
+# --- cmdlab: 보존 기간은 정해진 값만 (실제 AWS 처럼) ---
+_CL_RETENTION = [1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1096, 1827, 2192, 2557, 2922, 3288, 3653]
+_cl_orig_put_retention_policy = LogsBackend.put_retention_policy
+
+
+def _cl_put_retention_policy(self, log_group_name, retention_in_days):
+    from moto.logs.exceptions import InvalidParameterException
+    if int(retention_in_days) not in _CL_RETENTION:
+        raise InvalidParameterException(
+            msg=f"1 validation error detected: Value '{retention_in_days}' at 'retentionInDays' failed to satisfy constraint: "
+                f"Member must satisfy enum value set: {_CL_RETENTION}")
+    return _cl_orig_put_retention_policy(self, log_group_name, retention_in_days)
+
+
+LogsBackend.put_retention_policy = _cl_put_retention_policy
+'''
+if 'cmdlab: 보존 기간은' not in s:
+    assert 'def put_retention_policy' in s, 'moto logs 코드가 예상과 달라요'
+    p.write_text(s + RET)
+print('patched', p)
+
+# Backup: (1) update-backup-plan 이 없어서 500 에러 (2) 지운 계획과 같은 이름으로 다시 만들 수 없음
+#         → 규칙을 고치려던 학습자가 막힘
+p = pathlib.Path(importlib.util.find_spec('moto.backup.models').origin)
+s = p.read_text()
+BK = '''
+
+# --- cmdlab: 지운 계획 이름은 다시 쓸 수 있게, update-backup-plan 지원 ---
+def _cl_create_backup_plan(self, backup_plan, backup_plan_tags, creator_request_id):
+    if any(p.deletion_date is None and p.backup_plan["BackupPlanName"] == backup_plan["BackupPlanName"] for p in self.plans.values()):
+        raise AlreadyExistsException(msg="Backup plan with the same plan document already exists")
+    plan = Plan(backup_plan=backup_plan, creator_request_id=creator_request_id, backend=self)
+    if backup_plan_tags:
+        self.tag_resource(plan.backup_plan_arn, backup_plan_tags)
+    self.plans[plan.backup_plan_id] = plan
+    return plan
+
+
+def _cl_update_backup_plan(self, backup_plan_id, backup_plan):
+    old = self.plans.get(backup_plan_id)
+    if old is None or old.deletion_date is not None:
+        raise ResourceNotFoundException(msg="Failed reading Backup plan with provided version")
+    new = Plan(backup_plan=backup_plan, creator_request_id=old.creator_request_id, backend=self)
+    new.backup_plan_id, new.backup_plan_arn, new.creation_date = old.backup_plan_id, old.backup_plan_arn, old.creation_date
+    self.plans[backup_plan_id] = new
+    return new
+
+
+BackupBackend.create_backup_plan = _cl_create_backup_plan
+BackupBackend.update_backup_plan = _cl_update_backup_plan
+'''
+if 'cmdlab: 지운 계획' not in s:
+    assert 'class BackupBackend' in s and 'class Plan' in s, 'moto backup 코드가 예상과 달라요'
+    p.write_text(s + BK)
+p = pathlib.Path(importlib.util.find_spec('moto.backup.responses').origin)
+s = p.read_text()
+BKR = '''
+
+# --- cmdlab: update-backup-plan ---
+def _cl_update_backup_plan_response(self):
+    params = json.loads(self.body)
+    plan_id = [x for x in self.path.split("/") if x][-1]
+    plan = self.backup_backend.update_backup_plan(plan_id, params.get("BackupPlan"))
+    return json.dumps(dict(plan.to_dict()))
+
+
+BackupResponse.update_backup_plan = _cl_update_backup_plan_response
+'''
+if 'cmdlab: update-backup-plan' not in s:
+    assert 'class BackupResponse' in s and 'import json' in s, 'moto backup 응답 코드가 예상과 달라요'
+    p.write_text(s + BKR)
+print('patched', p)
