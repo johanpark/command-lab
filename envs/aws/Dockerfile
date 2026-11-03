@@ -44,4 +44,8 @@ COPY lab-aws.sh /usr/local/lib/lab-aws.sh
 COPY start-moto.sh /usr/local/bin/start-moto
 RUN chmod +x /usr/local/bin/start-moto
 
+# 위 보정들이 실제로 동작하는지 확인 (moto 를 올렸다가 하나라도 깨지면 빌드 실패)
+COPY patch-check.sh /tmp/patch-check.sh
+RUN bash /tmp/patch-check.sh && rm /tmp/patch-check.sh
+
 WORKDIR /home/learner

@@ -8,6 +8,8 @@ source /opt/cmdlab/run/env
 : "${LEARNER_HOME:=/home/$LEARNER}"
 H="$LEARNER_HOME"
 umask 022
+# 채점용 공용 파이썬 도구 (lib/grading: policy.py, cron.py) 를 import 할 수 있게
+export PYTHONPATH="/opt/cmdlab/lib/grading${PYTHONPATH:+:$PYTHONPATH}" PYTHONDONTWRITEBYTECODE=1
 
 # ---------- setup.sh 용 ----------
 
