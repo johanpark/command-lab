@@ -15,10 +15,19 @@ same=$(jq -cS 'del(.password)' <<< "$cur" 2>/dev/null); orig=$(jq -cS 'del(.pass
 prev=$(aws secretsmanager get-secret-value --secret-id prod/shop/db --version-stage AWSPREVIOUS --query SecretString --output text 2>/dev/null | jq -r .password 2>/dev/null)
 [ "$prev" = "$OLD" ] && pass "옛 값은 AWSPREVIOUS 버전에 남아 있다" || fail "옛 값은 AWSPREVIOUS 버전에 남아 있다 (put-secret-value 를 여러 번 했나요? 지금 AWSPREVIOUS: ${prev:+다른 값})"
 # RDS 의 실제 마스터 비밀번호는 API 로 볼 수 없어서, 가짜 AWS 의 내부 상태(moto-api)로 확인한다
-dbpw=$(curl -s "$AWS_ENDPOINT_URL/moto-api/data.json" | jq -r 'first(.rds.DBInstance[] | select(.db_instance_identifier == "shop-db") | .master_user_password)')  # 같은 DB 가 두 번 나올 수 있다
-if [ -n "$NEW" ] && [ "$dbpw" = "$NEW" ]; then pass "shop-db 의 마스터 비밀번호가 새 비밀번호와 같다"
+DATA=$(curl -s "$AWS_ENDPOINT_URL/moto-api/data.json")
+dbpw() { jq -r --arg d "$1" 'first(.rds.DBInstance[] | select(.db_instance_identifier == $d) | .master_user_password) // empty' <<< "$DATA"; }  # 같은 DB 가 두 번 나올 수 있다
+# moto-api 에는 지운 DB 도 남아 있을 수 있어서, 있는지는 RDS API 로 본다
+alive() { aws rds describe-db-instances --db-instance-identifier "$1" >/dev/null 2>&1; }
+dbpw=$(dbpw shop-db)
+if ! alive shop-db; then fail "shop-db 의 마스터 비밀번호가 새 비밀번호와 같다 (shop-db 가 없어요)"
+elif [ -n "$NEW" ] && [ "$dbpw" = "$NEW" ]; then pass "shop-db 의 마스터 비밀번호가 새 비밀번호와 같다"
 elif [ "$dbpw" = "$OLD" ]; then fail "shop-db 의 마스터 비밀번호가 새 비밀번호와 같다 (DB 는 아직 노출된 옛 비밀번호예요)"
 else fail "shop-db 의 마스터 비밀번호가 새 비밀번호와 같다 (DB 와 비밀 값이 달라요 — 앱이 접속을 못 해요)"; fi
+rep=$(dbpw report-db)
+if ! alive report-db || [ -z "$rep" ]; then fail "report-db 는 그대로다 (DB 가 없어요)"
+elif [ "$rep" = "$(secret_get report_pw)" ]; then pass "report-db 는 그대로다"
+else fail "report-db 는 그대로다 (마스터 비밀번호가 바뀌었어요 — 보고용 앱이 접속을 못 해요)"; fi
 [ "$(aws secretsmanager get-secret-value --secret-id prod/report/db --query SecretString --output text)" = "$(cat $S/report)" ] \
   && pass "prod/report/db 는 그대로다" || fail "prod/report/db 는 그대로다"
 finish

@@ -18,6 +18,7 @@ ensure_busybox() {
   docker image inspect busybox:latest >/dev/null 2>&1 && return 0
   local r a
   r=$(mktemp -d)
+  chmod 755 "$r" # mktemp 는 700 이라 그대로 넣으면 이미지의 / 가 700 이 돼서 root 가 아닌 사용자는 아무것도 못 연다
   mkdir -p "$r/bin" "$r/etc" "$r/tmp" "$r/root"
   cp "$(command -v busybox)" "$r/bin/busybox"
   for a in $("$r/bin/busybox" --list); do [ "$a" = busybox ] || ln -s busybox "$r/bin/$a"; done
