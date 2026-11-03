@@ -66,6 +66,22 @@ summary: 한 줄 설명
 | `expect_cell "설명" 기대값 [파일]` | sqlite3 처럼 표(머리글, 테두리 포함)로 저장된 답안에서 마지막 값 한 칸을 비교 |
 | `finish` | 하나라도 fail 이면 종료코드 1 |
 
+#### 공용 채점 도구 (파이썬, [`lib/grading`](../lib/grading))
+문자열을 비교하는 대신 **실제 규칙대로 계산**해서 채점하면, 학습자가 다르게 써도 결과가 맞으면 통과하고, 그럴듯하지만 틀린 답은 정확히 걸러져요. `helpers.sh` 를 source 하면 파이썬에서 바로 `import` 할 수 있어요. (학습자에게는 보이지 않음)
+
+| 모듈 | 하는 일 |
+|---|---|
+| `policy` | IAM 정책·신뢰 정책·SCP 평가. 명시적 Deny > Allow, `*`·`?` 와일드카드, NotAction·NotResource, 조건(String·Arn·Bool·Null·Numeric, IfExists). `allowed(문서들, 작업, 리소스, 조건값)`, `scp_decide(단계별 문서들, ...)`, `assume_principals(신뢰 정책)` |
+| `cron` | AWS cron 식을 시간대째 실제로 굴려 보기. `fires(식, tz)` → 한국 시간 목록, `describe(목록)` |
+
+```python
+import policy
+policy.allowed([doc], 's3:GetObject', 'arn:aws:s3:::reports/2026/a.csv')   # True / False
+import cron
+cron.fires('cron(0 18 L * ? *)')            # 한국 시간 1월 1일 03:00, 2월 1일 03:00
+```
+새 기능이 필요하면 모듈에 넣고 [`test_grading.py`](../lib/grading/test_grading.py) 에 테스트를 더하세요 (`python3 -m unittest discover -s lib/grading`, CI 에서도 돌아요).
+
 ### 좋은 시나리오의 조건
 
 1. **매번 달라야 합니다.** 정답이 되는 값(숫자, 파일 위치, IP, 프로세스 이름)은 `rand_*` 로 만들고 `secret_set` 으로 숨겨 두세요.
@@ -186,6 +202,9 @@ Docker 환경의 시나리오는 `setup.sh` 에서 `source /usr/local/lib/lab-do
 [`envs/linux/Dockerfile`](../envs/linux/Dockerfile) 을 복사해서 시작하는 것을 추천합니다. bash가 아닌 셸을 쓰는 예시는 [`envs/powershell`](../envs/powershell) 을 보세요(셸 시작 시 안내 문구를 `profile.ps1` 로 출력).
 
 `Dockerfile` 이나 환경 폴더 안 파일이 바뀌면 다음 `lab start` 때 이미지가 자동으로 다시 빌드됩니다.
+
+#### 가짜 AWS(moto) 보정
+moto 가 실제 AWS 와 다르게 동작해서 학습자를 헷갈리게 하는 곳은 [`envs/aws/patch-moto.py`](../envs/aws/patch-moto.py) 에서 고쳐요. 보정을 더하면 [`envs/aws/patch-check.sh`](../envs/aws/patch-check.sh) 에 그 동작을 확인하는 줄도 함께 더하세요. 이미지 빌드 때 실행돼서, moto 버전을 올렸다가 보정이 깨지면 **어느 보정이 깨졌는지** 보여 주고 빌드를 멈춰요.
 
 ### 아이디어
 

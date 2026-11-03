@@ -9,21 +9,19 @@ elif jq -e '[.Statement | if type == "array" then .[] else . end | select(.Effec
      | select([.Action] | flatten | index("sts:AssumeRole"))] | length > 0' >/dev/null <<< "$trust"; then
   pass "report-server-role 을 EC2 가 맡을 수 있다"
 else fail "report-server-role 을 EC2 가 맡을 수 있다 (신뢰 정책에 ec2.amazonaws.com + sts:AssumeRole 이 없어요)"; fi
-# 역할의 모든 정책 문장 모으기 (인라인 + 관리형 기본 버전)
+# 역할의 모든 정책 문서 모으기 (인라인 + 관리형 기본 버전), 한 줄에 하나
 docs=$( { for p in $(aws iam list-role-policies --role-name $R --query PolicyNames --output text 2>/dev/null); do
             aws iam get-role-policy --role-name $R --policy-name "$p" --query PolicyDocument --output json; done
           for a in $(aws iam list-attached-role-policies --role-name $R --query 'AttachedPolicies[].PolicyArn' --output text 2>/dev/null); do
             v=$(aws iam get-policy --policy-arn "$a" --query Policy.DefaultVersionId --output text)
             aws iam get-policy-version --policy-arn "$a" --version-id "$v" --query PolicyVersion.Document --output json; done; } \
-        | jq -c '.Statement | if type == "array" then .[] else . end | select(.Effect == "Allow")
-                 | {a: ([.Action] | flatten), r: ([.Resource] | flatten)}' 2>/dev/null)
-has() { # 작업 리소스 → 허용하는 문장이 있나 (IAM 와일드카드 * ? 비교)
+        | jq -c . 2>/dev/null)
+has() { # 작업 리소스 → 실제로 허용되나 (공용 policy.py: 명시적 Deny > Allow, IAM 와일드카드)
   DOCS="$docs" python3 - "$1" "$2" <<'PY'
-import fnmatch, json, os, sys
-a, r = sys.argv[1], sys.argv[2]
-st = [json.loads(l) for l in os.environ['DOCS'].splitlines() if l.strip()]
-ok = any(any(fnmatch.fnmatchcase(a.lower(), x.lower()) for x in s['a']) and any(fnmatch.fnmatchcase(r, x) for x in s['r']) for s in st)
-sys.exit(0 if ok else 1)
+import json, os, sys
+import policy
+docs = [json.loads(l) for l in os.environ['DOCS'].splitlines() if l.strip()]
+sys.exit(0 if policy.allowed(docs, sys.argv[1], sys.argv[2]) else 1)
 PY
 }
 miss=""

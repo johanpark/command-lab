@@ -1,8 +1,10 @@
-"""report-bot 의 실제 권한을 간단히 계산한다 (Allow 문장만, 와일드카드 지원).
+"""report-bot 의 실제 권한을 계산한다 (공용 policy.py: 명시적 Deny > Allow, 와일드카드, NotAction, 조건).
 
 사용법: python3 iam_eval.py 버킷 다른버킷  → 한 줄에 '결과<TAB>설명'
 """
-import fnmatch, json, subprocess, sys
+import json, subprocess, sys
+
+import policy
 
 bucket, other = sys.argv[1], sys.argv[2]
 user = "report-bot"
@@ -21,29 +23,11 @@ for p in (aws("iam", "list-attached-user-policies", "--user-name", user) or {}).
 for name in (aws("iam", "list-user-policies", "--user-name", user) or {}).get("PolicyNames", []):
     docs.append((name, aws("iam", "get-user-policy", "--user-name", user, "--policy-name", name)["PolicyDocument"]))
 
-broad = False
-statements = []
-for name, doc in docs:
-    if isinstance(doc, str):
-        doc = json.loads(doc)
-    st = doc.get("Statement", [])
-    for s in st if isinstance(st, list) else [st]:
-        if s.get("Effect") != "Allow":
-            continue
-        if "NotAction" in s or "NotResource" in s:
-            broad = True
-            continue
-        acts = s.get("Action", []); res = s.get("Resource", [])
-        statements.append(([acts] if isinstance(acts, str) else acts, [res] if isinstance(res, str) else res))
+policies = [doc for _, doc in docs]
 
 
 def allowed(action, resource):
-    if broad:
-        return True
-    for acts, res in statements:
-        if any(fnmatch.fnmatchcase(action.lower(), a.lower()) for a in acts) and any(fnmatch.fnmatchcase(resource, r) for r in res):
-            return True
-    return False
+    return policy.allowed(policies, action, resource)   # Deny·NotAction·조건까지 실제 규칙대로
 
 
 attached = [n for n, _ in docs]

@@ -10,6 +10,8 @@ find "$L/lib" "$L/scenario" -type f \( -name '*.sh' -o -name '*.md' -o -path "$L
 
 chmod 755 "$L" "$L/lib" "$L/lib/bin" "$L/scenario"
 chmod 755 "$L"/lib/bin/*
+# 공용 채점 도구도 학습자에게는 숨긴다
+if [ -d "$L/lib/grading" ]; then chmod -R go-rwx "$L/lib/grading"; fi
 # 정답/채점 로직(setup·check·solution·해설·채점 도우미 *.py 등)은 학습자에게 보이지 않게.
 # 학습자가 읽는 건 문제(task.md)와 힌트(hints.md, hint 명령) 뿐이다.
 find "$L/scenario" -mindepth 1 -maxdepth 1 ! -name task.md ! -name hints.md -exec chmod -R go-rwx {} +

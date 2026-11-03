@@ -31,6 +31,8 @@ jobs:
       - run: npm ci
       - name: 구조 검사
         run: node bin/lab.js validate
+      - name: 공용 채점 도구 단위 테스트 (lib/grading)
+        run: python3 -m unittest discover -s lib/grading -v
       - name: 테스트할 시나리오 고르기
         id: plan
         run: node .github/scripts/plan.mjs
