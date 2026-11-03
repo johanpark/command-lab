@@ -22,11 +22,12 @@ else
     (if .Namespace != "Shop" or .MetricName != "ApiErrors" then "지표(Shop/ApiErrors)" else empty end),
     (if .Statistic != "Sum" then "통계(Sum)" else empty end),
     (if .Period != 60 then "기간(60초)" else empty end),
-    (if .EvaluationPeriods != 3 then "연속 횟수(3)" else empty end),
+    (if .EvaluationPeriods != 3 or (.DatapointsToAlarm // .EvaluationPeriods) != .EvaluationPeriods then "연속 횟수(3번 중 3번 = evaluation-periods 3, datapoints-to-alarm 은 빼거나 3)" else empty end),
     (if .Threshold != 10 then "임계값(10)" else empty end),
     (if .ComparisonOperator != "GreaterThanOrEqualToThreshold" then "비교(10 이상 = GreaterThanOrEqualToThreshold)" else empty end),
     (if (.TreatMissingData // "missing") != "notBreaching" then "데이터 없음 처리(notBreaching)" else empty end),
-    (if (.AlarmActions | index($t)) == null then "알림 대상(ops-alerts)" else empty end)
+    (if (.AlarmActions | index($t)) == null then "알림 대상(ops-alerts)" else empty end),
+    (if .ActionsEnabled == false then "알림 꺼짐(--no-actions-enabled 면 울려도 알림이 안 가요 → --actions-enabled)" else empty end)
   ] | join(", ")' <<< "$a")
   [ -z "$bad" ] && pass "api-errors-high 알람이 규칙대로 있다" || fail "api-errors-high 알람이 규칙대로 있다 (다른 곳: $bad)"
 fi

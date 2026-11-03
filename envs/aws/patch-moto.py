@@ -97,7 +97,7 @@ if 'cmdlab: 실제 CloudWatch Logs' not in s:
     p.write_text(s + LOGS)
 print('patched', p)
 
-# S3: get-bucket-replication 이 접두사 필터·저장 클래스·삭제 마커 설정을 무시하고 늘 빈 값으로 돌려준다
+# S3: get-bucket-replication 이 접두사·태그 필터, 저장 클래스, 삭제 마커 설정을 무시하고 늘 빈 값으로 돌려준다
 #     → 저장된 실제 값을 그대로 보여 주도록 응답 템플릿을 고친다
 p = pathlib.Path(importlib.util.find_spec('moto.s3.responses').origin)
 s = p.read_text()
@@ -114,10 +114,13 @@ NEW_RULE = '''  {# cmdlab #}
   <DeleteMarkerReplication>
     <Status>{{ (rule.get("DeleteMarkerReplication") or {}).get("Status") or "Disabled" }}</Status>
   </DeleteMarkerReplication>
-  {% if rule.get("Filter") is mapping %}
+  {% if rule.get("Filter") is mapping %}{% set f = rule["Filter"] %}
   <Filter>
-    {% if rule["Filter"].get("And") is mapping %}<And><Prefix>{{ rule["Filter"]["And"].get("Prefix") or "" }}</Prefix></And>
-    {% else %}<Prefix>{{ rule["Filter"].get("Prefix") or "" }}</Prefix>{% endif %}
+    {% if f.get("And") is mapping %}{% set tags = f["And"].get("Tag") or [] %}{% if tags is mapping %}{% set tags = [tags] %}{% endif %}
+    <And>{% if f["And"].get("Prefix") is not none %}<Prefix>{{ f["And"]["Prefix"] or "" }}</Prefix>{% endif %}
+      {% for t in tags %}<Tag><Key>{{ t["Key"] }}</Key><Value>{{ t["Value"] }}</Value></Tag>{% endfor %}</And>
+    {% elif f.get("Tag") is mapping %}<Tag><Key>{{ f["Tag"]["Key"] }}</Key><Value>{{ f["Tag"]["Value"] }}</Value></Tag>
+    {% else %}<Prefix>{{ f.get("Prefix") or "" }}</Prefix>{% endif %}
   </Filter>
   {% elif "Prefix" in rule %}
   <Prefix>{{ rule["Prefix"] or "" }}</Prefix>
@@ -131,4 +134,19 @@ NEW_RULE = '''  {# cmdlab #}
 if '{# cmdlab #}' not in s:
     assert OLD_RULE in s, 'moto s3 복제 템플릿이 예상과 달라요'
     p.write_text(s.replace(OLD_RULE, NEW_RULE))
+print('patched', p)
+
+# CloudWatch Logs: 같은 로그 그룹에 같은 이름으로 put-metric-filter 를 다시 하면 고치지 않고 하나 더 쌓는다
+#                  (실제 AWS 는 기존 필터를 새 값으로 바꾼다) → 오타를 고쳐 다시 저장한 학습자가 채점에서 막힘
+p = pathlib.Path(importlib.util.find_spec('moto.logs.metric_filters').origin)
+s = p.read_text()
+OLD_ADD = '''    ) -> None:
+        self.metric_filters.append('''
+NEW_ADD = '''    ) -> None:
+        self.metric_filters = [f for f in self.metric_filters  # cmdlab: 같은 이름은 바꿔 쓰기
+                               if not (f["filterName"] == filter_name and f["logGroupName"] == log_group_name)]
+        self.metric_filters.append('''
+if '# cmdlab' not in s:
+    assert OLD_ADD in s, 'moto 지표 필터 코드가 예상과 달라요'
+    p.write_text(s.replace(OLD_ADD, NEW_ADD))
 print('patched', p)

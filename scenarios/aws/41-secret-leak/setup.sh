@@ -8,8 +8,9 @@ OLD="Shop$(rand_int 1000 9999)!pass"; secret_set old "$OLD"
 aws rds create-db-instance --db-instance-identifier shop-db --engine postgres --db-instance-class db.t3.medium \
   --master-username shopadmin --master-user-password "$OLD" --allocated-storage 50 --no-publicly-accessible >/dev/null
 EP=$(aws rds describe-db-instances --db-instance-identifier shop-db --query 'DBInstances[0].Endpoint.Address' --output text)
+REP="Rep$(rand_int 1000 9999)!pw"; secret_set report_pw "$REP"
 aws rds create-db-instance --db-instance-identifier report-db --engine postgres --db-instance-class db.t3.small \
-  --master-username reporter --master-user-password "Rep$(rand_int 1000 9999)!pw" --allocated-storage 20 >/dev/null
+  --master-username reporter --master-user-password "$REP" --allocated-storage 20 >/dev/null
 jq -cn --arg p "$OLD" --arg h "$EP" '{engine: "postgres", host: $h, port: 5432, username: "shopadmin", password: $p, dbname: "shop"}' > $S/orig.json
 aws secretsmanager create-secret --name prod/shop/db --description "운영 DB 접속 정보" --secret-string "$(cat $S/orig.json)" >/dev/null
 aws secretsmanager create-secret --name prod/report/db --secret-string '{"username":"reporter","password":"(그대로)"}' >/dev/null

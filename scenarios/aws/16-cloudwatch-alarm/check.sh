@@ -13,10 +13,11 @@ while read -r id n; do
     (if (.Dimensions | map(select(.Name == "InstanceId")) | .[0].Value) != $id then "차원(InstanceId=\($id))" else empty end),
     (if .Statistic != "Average" then "통계(Average)" else empty end),
     (if .Period != 300 then "기간(300초)" else empty end),
-    (if .EvaluationPeriods != 2 then "연속 횟수(2)" else empty end),
+    (if .EvaluationPeriods != 2 or (.DatapointsToAlarm // .EvaluationPeriods) != .EvaluationPeriods then "연속 횟수(2번 중 2번 = evaluation-periods 2, datapoints-to-alarm 은 빼거나 2)" else empty end),
     (if .Threshold != 80 then "임계값(80)" else empty end),
     (if .ComparisonOperator != "GreaterThanThreshold" then "비교(GreaterThanThreshold)" else empty end),
-    (if (.AlarmActions | index($t)) == null then "알림 대상(ops-alerts)" else empty end)
+    (if (.AlarmActions | index($t)) == null then "알림 대상(ops-alerts)" else empty end),
+    (if .ActionsEnabled == false then "알림 꺼짐(--no-actions-enabled 면 울려도 알림이 안 가요 → --actions-enabled)" else empty end)
   ] | join(", ")' <<< "$a")
   [ -z "$bad" ] && pass "cpu-high-$n 알람이 규칙대로 있다" || fail "cpu-high-$n 알람이 규칙대로 있다 (다른 곳: $bad)"
 done < $S/prod
