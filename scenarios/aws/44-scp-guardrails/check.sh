@@ -19,7 +19,7 @@ names "$R" | grep -qw deny-leave-org && pass "deny-leave-org 는 루트에 그�
 L=$(jq -n -c --argjson r "$(docs "$R")" --argjson s "$(docs "$SBX")" --argjson sa "$(docs "$SA")" --argjson p "$(docs "$PROD")" --argjson pa "$(docs "$PA")" \
   '{sbx: [$r, $s, $sa], prod: [$r, $p, $pa]}')
 CASES='[
- ["sbx:region1","ec2:RunInstances","us-east-1","t3.micro"], ["sbx:region2","s3:CreateBucket","eu-west-1",null], ["sbx:region3","lambda:CreateFunction","us-west-2",null],
+ ["sbx:region1","ec2:RunInstances","us-east-1","t3.micro"], ["sbx:region2","s3:CreateBucket","eu-west-1",null], ["sbx:region3","lambda:CreateFunction","us-west-2",null], ["sbx:region4","ec2:RunInstances","ap-northeast-1","t3.micro"], ["sbx:region5","s3:CreateBucket","ap-northeast-3",null],
  ["sbx:global1","iam:CreateRole","us-east-1",null], ["sbx:global2","sts:AssumeRole","us-east-1",null], ["sbx:global3","route53:ChangeResourceRecordSets","us-east-1",null], ["sbx:global4","cloudfront:CreateDistribution","us-east-1",null],
  ["sbx:seoul1","ec2:RunInstances","ap-northeast-2","t3.micro"], ["sbx:seoul2","s3:PutObject","ap-northeast-2",null], ["sbx:seoul3","ec2:DescribeInstances","ap-northeast-2",null],
  ["sbx:gpu1","ec2:RunInstances","ap-northeast-2","p3.8xlarge"], ["sbx:gpu2","ec2:RunInstances","ap-northeast-2","g5.xlarge"], ["sbx:gpu3","ec2:RunInstances","ap-northeast-2","g4dn.xlarge"],
@@ -34,7 +34,7 @@ group() { # 제목 기대값 설명 케이스...
   for c in "$@"; do [ "$(get "$c")" = "$want" ] || bad+="$(jq -r --arg c "$c" '.[] | select(.[0] == $c) | "\(.[1]) @\(.[2])\(if .[3] then " (\(.[3]))" else "" end)"' <<< "$CASES"), "; done
   [ -z "$bad" ] && pass "$title" || fail "$title ($desc: ${bad%, })"
 }
-group "Sandbox 계정은 서울 밖 리전을 못 쓴다" deny "아직 되는 요청" sbx:region1 sbx:region2 sbx:region3
+group "Sandbox 계정은 서울 밖 리전을 못 쓴다" deny "아직 되는 요청" sbx:region1 sbx:region2 sbx:region3 sbx:region4 sbx:region5
 group "전역 서비스(iam·sts·route53·cloudfront)는 막지 않는다" allow "막혀 버린 요청" sbx:global1 sbx:global2 sbx:global3 sbx:global4
 group "서울에서 하는 평범한 작업은 된다" allow "막혀 버린 요청" sbx:seoul1 sbx:seoul2 sbx:seoul3
 group "GPU(p·g 계열) 인스턴스는 서울에서도 못 켠다" deny "아직 되는 요청" sbx:gpu1 sbx:gpu2 sbx:gpu3

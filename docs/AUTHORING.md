@@ -19,9 +19,12 @@ scenarios/linux/10-my-scenario/
 ├── check.sh         필수: 채점 (root로 실행, 종료코드 0이면 통과)
 ├── hints.md         선택: 단계별 힌트 (--- 줄로 구분)
 ├── debrief.md       선택: 통과 후 보여줄 해설
-└── solution.sh      선택(강력 권장): 모범 풀이. lab test 가 사용
-                     (PowerShell 환경은 solution.ps1)
+├── solution.sh      선택(강력 권장): 모범 풀이. lab test 가 사용
+│                    (PowerShell 환경은 solution.ps1)
+└── traps/           선택(강력 권장): 함정·변형 테스트. lab test 가 사용 (컨테이너에는 들어가지 않음)
 ```
+
+컨테이너 안의 학습자는 `task.md` 와 `hints.md` 만 읽을 수 있어요. 나머지(채점용 `*.py` 같은 보조 파일 포함)는 root 만 읽을 수 있게 숨겨져요.
 
 폴더 이름의 앞 번호가 목록 순서가 됩니다. `_` 나 `.` 으로 시작하는 폴더는 무시됩니다(작업 중인 초안용).
 
@@ -88,11 +91,37 @@ lab validate                # 필수 파일, YAML, CRLF 줄바꿈 검사
 lab test linux/10           # 1) 풀기 전 check 가 실패하는지
                             # 2) solution.sh 가 성공하는지
                             # 3) 풀이 후 check 가 통과하는지
+                            # 4) traps/ 의 함정은 기대한 줄에서 실패하고, 변형은 통과하는지
 lab test linux              # 환경 전체
+lab test linux --no-traps   # 1~3 만 (빠르게)
 lab start linux/10          # 직접 풀어 보기
 ```
 
-`lab test` 는 학습 기록을 남기지 않습니다. GitHub Actions에서도 모든 시나리오에 대해 `lab test` 가 실행됩니다([.github/workflows/scenarios.yml](../.github/workflows/scenarios.yml)).
+### 함정·변형 테스트 (traps/)
+모범 풀이가 통과하는 것만으로는 부족해요. **틀린 풀이가 통과하는** 채점이 가장 흔한 결함이에요. 학습자가 실제로 저지를 법한 실수를 `traps/` 에 하나씩 적어 두면, `lab test` 가 매번 그 실수가 **정확한 이유로** 실패하는지 확인해요.
+
+```bash
+# traps/no-append.sh  (모범 풀이와 같은 종류: .sh 또는 .ps1)
+# 설명: usermod 에 -a 를 빼면 learner 가 designers 그룹에서 빠진다
+# 실패해야: designers                ← 채점 출력의 ✘ 줄에 이 문구가 있어야 함 (여러 줄 가능)
+sudo useradd -m -s /bin/bash kim
+sudo usermod -G webdev learner
+...
+```
+
+| 머리 주석 | 뜻 |
+|---|---|
+| `# 설명: ...` | 필수. 무엇을 확인하는지 |
+| `# 실패해야: 문구` | 채점이 실패하고, 이 문구가 든 ✘ 줄이 있어야 한다 |
+| `# 통과해야` | 다르게 풀어도 맞는 풀이(변형). 채점이 통과해야 한다 |
+| `# 모범 풀이 먼저` | 모범 풀이를 실행한 뒤 이 스크립트를 실행한다 ("다 풀고 나서 이것까지 하면?") |
+
+- 스크립트는 학습자 권한으로, 실습마다 **새 컨테이너**에서 실행돼요. 중간 명령이 실패해도 끝까지 가요(일부러 실패하는 명령도 있으니까).
+- 문구는 ✘ 줄의 **일부**만 쓰세요. 무작위 값(IP, 이름)이 들어가는 부분은 빼고요.
+- 함정 하나가 컨테이너 하나라 시간이 들어요. 시나리오마다 2~5개, 서로 다른 실수를 고르세요.
+- 채점을 고칠 때는 **먼저 함정을 만들어 실패(= 지금은 통과돼 버림)를 재현**하고, 채점을 고쳐서 그 함정이 실패로 바뀌는 걸 확인하세요.
+
+`lab test` 는 학습 기록을 남기지 않습니다. GitHub Actions에서도 모든 시나리오에 대해 `lab test`(함정 포함)가 실행됩니다([.github/workflows/scenarios.yml](../.github/workflows/scenarios.yml)).
 
 ---
 
