@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import YAML from 'yaml';
+import { lintScenario } from './lint.js';
 
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const ENVS_DIR = path.join(ROOT, 'envs');
@@ -177,6 +178,7 @@ export function findScenario(scenarios, query) {
 export function validateCatalog() {
   const { envs, scenarios } = loadCatalog();
   const problems = [...loadErrors];
+  const warnings = [];
   for (const env of envs) {
     if (!fs.existsSync(path.join(env.dir, 'Dockerfile'))) {
       problems.push(`env ${env.id}: Dockerfile이 없습니다.`);
@@ -206,6 +208,10 @@ export function validateCatalog() {
       }
       if (t.afterSolution && !solution) problems.push(`${s.id}: traps/${t.name}: '모범 풀이 먼저' 인데 solution 파일이 없습니다.`);
     }
+    // 문서 형식: 화면에서 깨져 보이는 실수, 빠진 메타데이터 (src/lint.js)
+    const lint = lintScenario(s, readYaml(path.join(s.dir, 'scenario.yaml')));
+    lint.errors.forEach((e) => problems.push(`${s.id}: ${e}`));
+    lint.warnings.forEach((w) => warnings.push(`${s.id}: ${w}`));
   }
-  return { envs, scenarios, problems };
+  return { envs, scenarios, problems, warnings };
 }

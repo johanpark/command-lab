@@ -75,7 +75,9 @@ function renderMarkdown(md) {
       return line
         .replace(/\\\|/g, '|') // 표 안 코드의 파이프(\|)는 터미널에선 그냥 | 로 보여야 복사해 쓸 수 있다
         .replace(/^>\s?/, '  ')
-        .replace(/`([^`]+)`/g, (_, code) => c.yellow(code)).replace(/\*\*([^*]+)\*\*/g, (_, b) => c.bold(b));
+        // 인라인 코드: ``a `b` c`` 처럼 백틱 여러 개로 감싼 것도 (CommonMark)
+        .replace(/(`+)(?!`)(.+?)(?<!`)\1(?!`)/g, (_, _t, code) => c.yellow(code.replace(/^ (.*) $/, '$1')))
+        .replace(/\*\*([^*]+)\*\*/g, (_, b) => c.bold(b));
     })
     .filter((l) => l !== null)
     .join('\n');
@@ -330,8 +332,9 @@ async function main() {
       return;
     }
     case 'validate': {
-      const { envs, scenarios, problems } = validateCatalog();
+      const { envs, scenarios, problems, warnings } = validateCatalog();
       console.log(`환경 ${envs.length}개, 시나리오 ${scenarios.length}개`);
+      warnings.forEach((w) => console.log(c.yellow(`⚠ ${w}`)));
       if (problems.length) {
         problems.forEach((p) => console.log(c.red(`✘ ${p}`)));
         process.exitCode = 1;

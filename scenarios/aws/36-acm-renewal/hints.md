@@ -3,7 +3,9 @@
 숫자를 날짜로: `date -d @<NotAfter>`
 ---
 JMESPath 로 바로 거르기 (숫자 비교는 백틱 리터럴):
-`aws acm list-certificates --query "CertificateSummaryList[?NotAfter<\`$(date -d '+30 day' +%s)\`].DomainName" --output text`
+```
+aws acm list-certificates --query "CertificateSummaryList[?NotAfter<\`$(date -d '+30 day' +%s)\`].DomainName" --output text
+```
 ---
 교체할 파일이 맞는지 확인: `openssl x509 -in ~/certs/shop.example-2027.crt -noout -subject -enddate` (2026 파일은 지금 쓰는 옛 것)
 같은 ARN 에 다시 가져오기:
