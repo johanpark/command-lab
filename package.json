@@ -10,6 +10,7 @@
     "lab": "node bin/lab.js",
     "web": "node bin/lab.js web --open",
     "validate": "node bin/lab.js validate",
+    "test:unit": "node --test 'test/*.test.js' && python3 -m unittest discover -s lib/grading",
     "test": "node bin/lab.js validate && node bin/lab.js test"
   },
   "engines": {
