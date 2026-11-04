@@ -191,7 +191,10 @@ export async function testScenario(catalog, scenario, { onLog, traps = true, onT
     for (const trap of loadTraps(scenario)) {
       let r;
       try {
-        r = await runTrap(catalog, scenario, trap, { onLog });
+        // 머리 주석이 잘못된 함정은 돌리지 않고 실패로 (기대가 없으면 무엇이든 '맞다' 가 돼 버린다)
+        r = trap.problems.length
+          ? { ok: false, why: `머리 주석 오류: ${trap.problems.join(', ')}`, output: '' }
+          : await runTrap(catalog, scenario, trap, { onLog });
       } catch (err) {
         r = { ok: false, why: err.message, output: '' };
       }
