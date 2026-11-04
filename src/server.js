@@ -7,7 +7,7 @@ import { marked } from 'marked';
 import { WebSocketServer } from 'ws';
 import { ROOT, findScenario, loadCatalog, readScenarioDocs } from './catalog.js';
 import { containerName, findContainer, openShell } from './docker.js';
-import { loadProgress, scenarioStatus } from './progress.js';
+import { loadProgress, recordHint, scenarioStatus } from './progress.js';
 import { checkScenario, envFor, runningScenarioIds, startScenario, stopScenario } from './session.js';
 
 const WEB_DIR = path.join(ROOT, 'web');
@@ -74,6 +74,7 @@ const routes = {
       dockerOk,
       current: progress.current,
       envs: catalog.envs.map(({ id, name, short, description, icon, categories }) => ({ id, name, short, description, icon, categories })),
+      tracks: catalog.tracks.map(({ id, title, icon, description, steps }) => ({ id, title, icon, description, steps })),
       scenarios: catalog.scenarios.map((s) => {
         const { lastHistory, ...status } = scenarioStatus(progress, s.id);
         return {
@@ -141,6 +142,14 @@ const routes = {
     const catalog = loadCatalog();
     const result = await checkScenario(catalog, lookup(catalog, id));
     return { passed: result.passed, output: result.output, history: result.history, progress: result.progress };
+  },
+
+  // 힌트를 몇 개까지 봤는지 (난이도 가늠용 기록)
+  'POST /api/hint': async (req) => {
+    const { id, n } = await readJson(req);
+    const catalog = loadCatalog();
+    const e = recordHint(lookup(catalog, id).id, Math.max(0, Math.min(Number(n) || 0, 20)));
+    return { hintsSeen: e.hintsSeen };
   },
 
   'POST /api/stop': async (req) => {

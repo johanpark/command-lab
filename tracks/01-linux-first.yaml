@@ -1,0 +1,14 @@
+title: 리눅스 첫걸음
+icon: 🐧
+description: 서버에 처음 들어간 날 필요한 것들. 파일과 폴더, 로그 읽기, 권한, 명령어가 없다는 에러까지.
+steps:
+  - linux/01-first-steps
+  - linux/02-hidden-files
+  - linux/03-make-workspace
+  - linux/04-clean-downloads
+  - linux/23-vim-survival
+  - linux/05-read-logs
+  - linux/07-permission-denied
+  - linux/10-find-recent
+  - linux/13-tar-backup
+  - linux/15-command-not-found

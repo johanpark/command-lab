@@ -1,0 +1,16 @@
+title: 배포와 자동화
+icon: 🚀
+description: 스크립트 작성부터 cron, 배포 실패 원인 찾기, 롤백까지. "손으로는 되는데 자동으로는 안 돼요" 를 해결한다.
+steps:
+  - linux/27-first-script
+  - linux/28-crlf-script
+  - linux/32-export-env
+  - linux/14-cron-schedule
+  - linux/31-cron-deploy
+  - linux/29-silent-failure
+  - linux/30-rollback
+  - linux/21-deploy-failure
+  - linux/40-nohup-job
+  - linux/42-tar-release
+  - script/04-cron-scripts
+  - docker/09-deploy-script

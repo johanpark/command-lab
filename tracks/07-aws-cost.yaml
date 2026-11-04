@@ -1,0 +1,14 @@
+title: AWS 비용 줄이기
+icon: 💸
+description: 청구서에서 새는 돈 찾기. 놀고 있는 서버·디스크·IP·이미지·로그를 정리하고 더 싼 설정으로 바꾼다.
+steps:
+  - aws/04-stop-dev
+  - aws/11-ebs-cleanup
+  - aws/37-ebs-gp3
+  - aws/42-eip-cleanup
+  - aws/33-rightsizing
+  - aws/31-ami-cleanup
+  - aws/21-vpc-endpoints
+  - aws/10-s3-lifecycle
+  - aws/27-ecr-lifecycle
+  - aws/46-log-retention

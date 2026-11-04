@@ -1,0 +1,20 @@
+title: Git 실전
+icon: 🌿
+description: 첫 커밋부터 충돌 해결, 되돌리기, 범인 커밋 찾기, 날린 커밋 되살리기까지.
+steps:
+  - git/01-first-commit
+  - git/15-amend
+  - git/11-gitignore-tracked
+  - git/04-recover-files
+  - git/03-merge-conflict
+  - git/05-stash-hotfix
+  - git/08-push-rejected
+  - git/14-wrong-branch
+  - git/09-cherry-pick
+  - git/13-who-changed
+  - git/06-find-bug-commit
+  - git/10-bisect
+  - git/12-reflog-rescue
+  - git/02-oops-secret
+  - git/07-squash-commits
+  - git/16-release-tag

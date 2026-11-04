@@ -1,0 +1,16 @@
+title: 서버 장애 대응
+icon: 🚨
+description: CPU·디스크·포트·DNS 처럼 실제로 자주 터지는 장애를 원인부터 찾아 고친다. 리눅스 첫걸음을 마친 뒤 추천.
+steps:
+  - linux/08-runaway-process
+  - linux/20-top-monitor
+  - linux/09-disk-full
+  - linux/26-deleted-open-file
+  - linux/12-port-in-use
+  - linux/43-error-spike
+  - linux/25-hosts-dns
+  - linux/18-api-check
+  - docker/02-crash-loop
+  - docker/11-healthcheck
+  - docker/14-port-allocated
+  - docker/06-disk-cleanup
