@@ -1,4 +1,5 @@
-// 학습 기록: 시도/통과 횟수, 복습 일정(간격 반복), 마지막으로 입력한 명령어.
+// 학습 기록: 시도/통과 횟수, 복습 일정(간격 반복), 마지막으로 입력한 명령어,
+// 그리고 난이도를 가늠할 첫 통과까지의 채점 실패 수·본 힌트 수·걸린 시간.
 // 저장 위치: ~/.cmdlab/progress.json (CMDLAB_HOME 으로 변경 가능)
 import fs from 'node:fs';
 import os from 'node:os';
@@ -36,6 +37,7 @@ export function recordStart(id) {
   const e = entry(data, id);
   e.attempts += 1;
   e.lastStartedAt = new Date().toISOString();
+  e.firstStartedAt ??= e.lastStartedAt;
   data.current = id;
   save(data);
 }
@@ -45,6 +47,14 @@ export function recordCheck(id, { passed, history }) {
   const e = entry(data, id);
   const now = Date.now();
   e.lastCheckedAt = new Date(now).toISOString();
+  e.checks = (e.checks ?? 0) + 1;
+  if (!passed && !e.passes) e.failsBeforePass = (e.failsBeforePass ?? 0) + 1;
+  if (passed && !e.passes) {
+    // 첫 통과: 이번 실습을 시작한 뒤 걸린 시간, 그때까지 본 힌트 수를 남긴다 (난이도 가늠용)
+    e.hintsBeforePass = e.hintsSeen ?? 0;
+    e.failsBeforePass ??= 0;
+    if (e.lastStartedAt) e.solveSeconds = Math.max(0, Math.round((now - Date.parse(e.lastStartedAt)) / 1000));
+  }
   if (history?.length) e.lastHistory = history.slice(-200);
   if (passed) {
     // 복습 시기가 됐을 때(또는 첫 통과) 통과해야 간격이 늘어난다.
@@ -57,6 +67,15 @@ export function recordCheck(id, { passed, history }) {
     e.firstPassedAt ??= new Date(now).toISOString();
     e.lastPassedAt = new Date(now).toISOString();
   }
+  save(data);
+  return e;
+}
+
+// n번째 힌트까지 봤다 (웹·CLI). 가장 많이 본 개수만 남긴다
+export function recordHint(id, n) {
+  const data = loadProgress();
+  const e = entry(data, id);
+  e.hintsSeen = Math.max(e.hintsSeen ?? 0, Number(n) || 0);
   save(data);
   return e;
 }
@@ -81,5 +100,9 @@ export function scenarioStatus(progress, id) {
     lastStartedAt: e.lastStartedAt ?? null,
     lastPassedAt: e.lastPassedAt ?? null,
     lastHistory: e.lastHistory ?? [],
+    hintsSeen: e.hintsSeen ?? 0,
+    failsBeforePass: e.failsBeforePass ?? 0,
+    hintsBeforePass: e.hintsBeforePass ?? null,
+    solveSeconds: e.solveSeconds ?? null,
   };
 }

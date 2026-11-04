@@ -10,7 +10,8 @@ import {
   listLabContainers,
   removeContainer,
 } from '../src/docker.js';
-import { loadProgress, scenarioStatus, setCurrent } from '../src/progress.js';
+import { feltDifficulty } from '../src/difficulty.js';
+import { loadProgress, recordHint, scenarioStatus, setCurrent } from '../src/progress.js';
 import {
   checkScenario,
   envFor,
@@ -52,6 +53,8 @@ ${c.bold('실습 중')}
 ${c.bold('기록 / 관리')}
   lab status               진행 상황과 복습 예정
   lab review               지금 복습할 시나리오 추천
+  lab tracks [코스]        학습 코스(주제별 문제 순서)와 진행
+  lab stats                첫 통과까지 걸린 시간·실패·힌트로 본 체감 난이도
   lab envs                 환경(연습할 CLI 종류) 목록
   lab build [환경|--all]   환경 이미지 미리 빌드 (--no-cache)
   lab validate             시나리오 파일 구조 검사
@@ -197,6 +200,73 @@ async function cmdStatus(catalog) {
   await cmdReview(catalog);
 }
 
+const MARK = { done: c.green('✔'), review: c.magenta('↻'), tried: c.yellow('◐'), new: c.dim('·') };
+const bar = (n, total, width = 20) => {
+  const fill = Math.round((n / (total || 1)) * width);
+  return `${c.green('█'.repeat(fill))}${c.dim('░'.repeat(width - fill))}`;
+};
+
+// lab tracks [코스]: 학습 코스 목록과 진행, 또는 한 코스의 순서
+function cmdTracks(catalog, query) {
+  const progress = loadProgress();
+  const st = (id) => scenarioStatus(progress, id).state;
+  const isDone = (id) => ['done', 'review'].includes(st(id));
+  const byId = (id) => catalog.scenarios.find((s) => s.id === id);
+  if (!catalog.tracks.length) return console.log('학습 코스가 없어요. (tracks/*.yaml)');
+  if (!query) {
+    console.log();
+    for (const t of catalog.tracks) {
+      const n = t.steps.filter(isDone).length;
+      const next = t.steps.find((id) => !isDone(id));
+      console.log(`${t.icon} ${c.bold(t.title)} ${c.dim(`(${t.id})`)}`);
+      console.log(`   ${bar(n, t.steps.length)} ${n}/${t.steps.length}  ${next ? `다음: lab start ${next}` : c.green('완주!')}`);
+    }
+    console.log(c.dim('\n코스 순서 보기: lab tracks <코스>  예) lab tracks aws-cost\n'));
+    return;
+  }
+  const t = catalog.tracks.find((x) => x.id === query) ?? catalog.tracks.filter((x) => x.id.includes(query) || x.title.includes(query))[0];
+  if (!t) throw new Error(`'${query}' 코스가 없어요. lab tracks 로 목록을 보세요.`);
+  const next = t.steps.find((id) => !isDone(id));
+  console.log(`\n${t.icon} ${c.bold(t.title)}\n${c.dim(t.description)}\n`);
+  t.steps.forEach((id, i) => {
+    const s = byId(id);
+    const here = id === next ? c.cyan(' ← 다음') : '';
+    console.log(`  ${String(i + 1).padStart(2)}. ${MARK[st(id)]} ${s.title} ${c.dim(id)}${here}`);
+  });
+  console.log(next ? `\n시작: lab start ${next}\n` : c.green('\n🎉 코스 완주!\n'));
+}
+
+// lab stats: 첫 통과까지 걸린 시간·실패·힌트를 레벨·예상 시간과 비교해 레벨 조정 후보를 보여 준다
+function cmdStats(catalog) {
+  const progress = loadProgress();
+  const rows = catalog.scenarios
+    .map((s) => ({ s, f: feltDifficulty(s, scenarioStatus(progress, s.id)) }))
+    .filter((r) => r.f);
+  if (!rows.length) {
+    console.log(c.dim('\n아직 기록이 없어요. 문제를 처음 통과하면 걸린 시간·채점 실패·힌트 수가 쌓여요.\n'));
+    return;
+  }
+  console.log(`\n${c.bold('첫 통과 기록')}  ${c.dim('(레벨 / 예상 → 실제 시간 / 채점 실패 / 힌트)')}`);
+  for (const { s, f } of rows) {
+    const tag = f.verdict === 'harder' ? c.red(' 어려웠음') : f.verdict === 'easier' ? c.cyan(' 쉬웠음') : '';
+    console.log(`  ${s.id.padEnd(32)} Lv${s.level}  ${String(s.minutes).padStart(3)}분 → ${String(f.minutes).padStart(3)}분  실패 ${f.fails}  힌트 ${f.hints}${tag}`);
+  }
+  const odd = rows.filter((r) => r.f.verdict !== 'ok');
+  console.log();
+  if (!odd.length) console.log(c.green('레벨과 체감 난이도가 대체로 맞아요.'));
+  else {
+    console.log(c.bold('레벨 조정 후보'));
+    for (const { s, f } of odd) {
+      const to = Math.min(f.felt, 3);
+      const arrow = s.level === 3 && f.felt > 3
+        ? '레벨 3 인데도 어려움 → 문제 설명·힌트 보강'
+        : `레벨 ${s.level} → ${to}${f.felt > 3 ? ' (문제 설명·힌트 보강도)' : ''}`;
+      console.log(`  ${f.verdict === 'harder' ? c.red('▲') : c.cyan('▼')} ${s.id}  ${arrow}  ${c.dim(f.why.join(', '))}`);
+    }
+  }
+  console.log(c.dim(`\n기록 ${rows.length}개 기준. 기록은 이 컴퓨터에만 있어요 (~/.cmdlab/progress.json)\n`));
+}
+
 async function cmdReview(catalog) {
   const progress = loadProgress();
   const due = catalog.scenarios.filter((s) => scenarioStatus(progress, s.id).state === 'review');
@@ -273,6 +343,7 @@ async function main() {
       const { hints } = readScenarioDocs(scenario);
       if (!hints.length) return console.log('이 시나리오에는 힌트가 없어요.');
       const n = Math.min(Math.max(Number(nArg ?? 1), 1), hints.length);
+      recordHint(scenario.id, n);
       console.log(`\n${c.yellow(`💡 힌트 ${n}/${hints.length}`)}\n${renderMarkdown(hints[n - 1])}\n`);
       if (n < hints.length) console.log(c.dim(`다음 힌트: lab hint ${n + 1}\n`));
       return;
@@ -312,6 +383,11 @@ async function main() {
       return cmdStatus(catalog);
     case 'review':
       return cmdReview(catalog);
+    case 'tracks':
+    case 'track':
+      return cmdTracks(catalog, positional[0]);
+    case 'stats':
+      return cmdStats(catalog);
     case 'build': {
       await ensureDockerReachable();
       const targets = flags.all || !positional[0] ? catalog.envs : catalog.envs.filter((e) => e.id === positional[0]);

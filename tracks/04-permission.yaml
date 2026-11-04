@@ -1,0 +1,13 @@
+title: 권한과 계정
+icon: 🔐
+description: 파일 권한 숫자, 그룹 공유 폴더, sudo 최소 권한, SSH 키까지. 보안 점검에서 가장 많이 걸리는 부분.
+steps:
+  - linux/07-permission-denied
+  - linux/44-fix-permissions
+  - linux/38-sudo-tee
+  - linux/41-new-account
+  - linux/17-team-folder
+  - linux/35-sudoers
+  - linux/22-ssh-key
+  - linux/39-ssh-config
+  - linux/45-ec2-pem

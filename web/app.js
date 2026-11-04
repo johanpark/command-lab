@@ -57,6 +57,7 @@ const state = {
   busy: false,
   fontSize: store.get('fontSize', 14),
   sideHidden: store.get('sideHidden', false), // 넓은 화면에서 사이드바를 접었는지
+  track: store.get('track', null), // 진행 중인 학습 코스 (코스 카드에서 문제를 열면 정해진다)
 };
 
 // ---------------- 공통 ----------------
@@ -136,6 +137,31 @@ const statusDots = (items) =>
   `<span class="dots" aria-label="${items.filter(isDone).length}/${items.length} 통과">${items
     .map((s) => `<i class="${s.status.state}" title="${esc(s.title)}"></i>`)
     .join('')}</span>`;
+
+// ---------------- 학습 코스 ----------------
+const trackById = (id) => state.catalog?.tracks?.find((t) => t.id === id) ?? null;
+const trackSteps = (t) => t.steps.map(byId).filter(Boolean);
+// 지금 문제가 진행 중인 코스에 들어 있으면 그 코스
+const activeTrack = (scenarioId) => {
+  const t = trackById(state.track);
+  return t && t.steps.includes(scenarioId) ? t : null;
+};
+function setTrack(id) {
+  state.track = id;
+  store.set('track', id);
+}
+// 코스에서 다음에 풀 문제: 지금 문제 뒤의 안 푼 문제 → 앞쪽에 남은 안 푼 문제
+function trackNext(t, afterId) {
+  const steps = trackSteps(t);
+  const i = steps.findIndex((s) => s.id === afterId);
+  return [...steps.slice(i + 1), ...steps.slice(0, Math.max(i, 0))].find((s) => !isDone(s)) ?? null;
+}
+document.addEventListener('click', (e) => {
+  const a = e.target.closest('[data-track]');
+  if (!a) return;
+  setTrack(a.dataset.track || null);
+  if (a.closest('#d-crumbs') && state.current) renderHeader(); // 코스에서 나가기
+});
 
 // 펼쳐 둔 카테고리 (환경별). 처음엔 지금 보는 문제나 안 푼 문제가 있는 첫 카테고리만 연다
 function openCats(env) {
@@ -334,6 +360,35 @@ function pickNext() {
   return null;
 }
 
+function renderTracks() {
+  const tracks = state.catalog.tracks ?? [];
+  if (!tracks.length) return '';
+  return `<h2 class="section-title">학습 코스 <span class="muted">주제별로 정한 순서대로 풀어요</span></h2>
+    <div class="track-cards">${tracks
+      .map((t) => {
+        const steps = trackSteps(t);
+        const n = steps.filter(isDone).length;
+        const next = trackNext(t, null);
+        const on = state.track === t.id;
+        return `<div class="card track-card${on ? ' on' : ''}">
+          <div class="env-card-head">
+            <span class="env-card-icon">${t.icon}</span>
+            <div><h3>${esc(t.title)}${on ? ' <span class="pill running">진행 중</span>' : ''}</h3><p class="desc">${esc(t.description)}</p></div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center">${progressBar(steps)}<span class="pct">${n}/${steps.length}</span></div>
+          ${
+            next
+              ? `<a class="btn${on ? ' primary' : ''}" href="#${esc(next.id)}" data-track="${esc(t.id)}">${n ? '이어서' : '시작'}: ${esc(next.title)} →</a>`
+              : '<p class="track-done">🎉 코스 완주!</p>'
+          }
+          <details class="track-steps"><summary>순서 보기 ${statusDots(steps)}</summary><ol>${steps
+            .map((s) => `<li><a href="#${esc(s.id)}" data-track="${esc(t.id)}">${stateIcon(s.status.state)} ${envOf(s.env).icon} ${esc(s.title)}</a></li>`)
+            .join('')}</ol></details>
+        </div>`;
+      })
+      .join('')}</div>`;
+}
+
 function renderHome() {
   const { envs, scenarios } = state.catalog;
   const next = pickNext();
@@ -382,6 +437,9 @@ function renderHome() {
       </div>
     </div>
 
+    ${renderTracks()}
+
+    <h2 class="section-title">환경별로 보기</h2>
     <div class="env-cards">
       ${envs
         .map((env) => {
@@ -478,8 +536,15 @@ function renderHeader() {
   const cat = catOf(env, d.category);
   const inCat = state.order.filter((s) => s.env === d.env && catOf(env, s.category).id === cat.id);
   const pos = inCat.findIndex((s) => s.id === d.id) + 1;
+  const t = activeTrack(d.id);
+  const tPos = t ? t.steps.indexOf(d.id) + 1 : 0;
   $('#d-crumbs').innerHTML = `<a href="#">홈</a><span class="sep">›</span><span>${env.icon} ${esc(env.name)}</span>
-    <span class="sep">›</span><span>${cat.icon} ${esc(cat.name)} <span class="muted">${pos}/${inCat.length}</span></span>`;
+    <span class="sep">›</span><span>${cat.icon} ${esc(cat.name)} <span class="muted">${pos}/${inCat.length}</span></span>${
+      t
+        ? `<span class="track-pill" title="학습 코스: ‹ › 와 '다음 문제' 가 이 코스 순서를 따라요">${t.icon} ${esc(t.title)} <b>${tPos}/${t.steps.length}</b>
+           <button class="icon-btn small" data-track="" aria-label="코스에서 나가기" title="코스에서 나가기 (원래 순서로)">✕</button></span>`
+        : ''
+    }`;
   const st = d.status.state;
   $('#d-title').innerHTML = `${esc(d.title)} <span class="pill ${st}">${STATE_NAME[st]}</span>${
     d.running ? '<span class="pill running">● 실행 중</span>' : ''
@@ -488,9 +553,10 @@ function renderHeader() {
     ${d.status.attempts ? `<span class="dot">·</span> 시도 ${d.status.attempts}회` : ''}
     ${d.tags.map((t) => `<span class="tag">${esc(t)}</span>`).join('')}`;
   renderActions();
-  const idx = state.order.findIndex((s) => s.id === d.id);
+  const order = navOrder(d.id);
+  const idx = order.findIndex((s) => s.id === d.id);
   $('#prev-btn').disabled = idx <= 0;
-  $('#next-btn').disabled = idx < 0 || idx >= state.order.length - 1;
+  $('#next-btn').disabled = idx < 0 || idx >= order.length - 1;
   $('#debrief-lock').textContent = d.status.passes > 0 || state.debriefOpen[d.id] ? '' : '🔒';
 }
 
@@ -512,10 +578,16 @@ $('#actions').addEventListener('click', (e) => {
   if (act === 'stop') stop();
 });
 
+// ‹ › 이동 순서: 진행 중인 코스에 든 문제면 코스 순서, 아니면 사이드바 순서
+function navOrder(id) {
+  const t = activeTrack(id);
+  return t ? trackSteps(t) : state.order;
+}
 function go(delta) {
   if (!state.current) return;
-  const idx = state.order.findIndex((s) => s.id === state.current.id);
-  const target = state.order[idx + delta];
+  const order = navOrder(state.current.id);
+  const idx = order.findIndex((s) => s.id === state.current.id);
+  const target = order[idx + delta];
   if (target) location.hash = target.id;
 }
 $('#prev-btn').addEventListener('click', () => go(-1));
@@ -556,6 +628,7 @@ function renderHints() {
   enhanceMarkdown($('#hints'));
   $('#more-hint')?.addEventListener('click', () => {
     store.set(hintKey(id), shown + 1);
+    api('/api/hint', { id, n: shown + 1 }).catch(() => {}); // 난이도 가늠용 기록 (실패해도 힌트는 보여 준다)
     renderHints();
     $('#hints .hint:last-of-type')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   });
@@ -776,6 +849,11 @@ async function stop() {
 }
 
 function nextAfterCurrent() {
+  const t = activeTrack(state.current.id);
+  if (t) {
+    const n = trackNext(t, state.current.id);
+    if (n) return n;
+  }
   const idx = state.order.findIndex((s) => s.id === state.current.id);
   const rest = [...state.order.slice(idx + 1), ...state.order.slice(0, idx)];
   return rest.find((s) => s.env === state.current.env && !isDone(s)) ?? rest.find((s) => !isDone(s)) ?? null;
@@ -785,9 +863,18 @@ function showPassDialog(r, wasFirst) {
   const dlg = $('#pass-dialog');
   const next = nextAfterCurrent();
   $('#pass-title').textContent = wasFirst ? '통과!' : '복습 완료!';
-  $('#pass-sub').textContent = r.progress?.nextReviewAt
-    ? `다음 복습은 ${fmtDate(r.progress.nextReviewAt)}에 추천할게요.`
-    : '잘했어요!';
+  const t = activeTrack(state.current.id);
+  const tLeft = t ? trackSteps(t).filter((s) => !isDone(s) && s.id !== state.current.id).length : null;
+  $('#pass-sub').textContent = [
+    r.progress?.nextReviewAt ? `다음 복습은 ${fmtDate(r.progress.nextReviewAt)}에 추천할게요.` : '잘했어요!',
+    t ? (tLeft ? `${t.icon} ${t.title} 코스 ${tLeft}문제 남았어요.` : `${t.icon} ${t.title} 코스 완주! 🎉`) : '',
+  ].filter(Boolean).join(' ');
+  // 처음 통과했을 때의 기록 (lab stats 에서 체감 난이도로 모아 볼 수 있다)
+  const p = r.progress ?? {};
+  $('#pass-stats').hidden = !(wasFirst && p.solveSeconds != null);
+  $('#pass-stats').textContent = wasFirst && p.solveSeconds != null
+    ? `⏱ ${Math.max(1, Math.round(p.solveSeconds / 60))}분 · 채점 실패 ${p.failsBeforePass ?? 0}번 · 힌트 ${p.hintsBeforePass ?? 0}개`
+    : '';
   $('#pass-checks').innerHTML = parseChecks(r.output);
   $('#pass-history').hidden = !r.history.length;
   $('#pass-history-list').textContent = r.history

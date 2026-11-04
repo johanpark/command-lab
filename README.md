@@ -56,7 +56,21 @@ lab solution              # 해설 (통과 후 권장)
 lab stop                  # 실습 종료 (lab stop --all)
 lab status                # 환경별 진행률, 복습할 문제
 lab review                # 지금 복습할 문제 추천
+lab tracks                # 학습 코스와 진행 (lab tracks aws-cost: 코스 순서)
+lab stats                 # 처음 통과까지 걸린 시간·채점 실패·힌트로 본 체감 난이도
 ```
+
+### 학습 코스
+문제가 많아서 어디서부터 풀지 막막하면 **코스**를 따라가세요. 주제별로 쉬운 문제에서 실전 문제 순서로 묶여 있어요.
+
+| 코스 | 문제 |
+|---|---|
+| 🐧 리눅스 첫걸음 · 🚨 서버 장애 대응 · 🚀 배포와 자동화 · 🔐 권한과 계정 | Linux 중심 (+ Docker·Script) |
+| 🌿 Git 실전 · 🐳 Docker 운영 | Git, Docker |
+| 💸 AWS 비용 줄이기 · 🛡️ AWS 보안 점검 | AWS |
+| 📊 데이터 다루기 | SQL, Script, PowerShell |
+
+웹 홈의 코스 카드에서 문제를 열면 그 코스가 "진행 중" 이 되고, 문제 화면의 `‹` `›` 와 통과 뒤 "다음 문제" 가 코스 순서를 따라가요. (상단의 코스 표시에서 ✕ 를 누르면 원래 순서로)
 
 시나리오 ID는 앞부분만 써도 됩니다(`lab start git/02`).
 
@@ -120,7 +134,7 @@ lab web --open            # http://localhost:4000
 
 ## 웹 화면 사용 팁
 
-- **홈**: "이어서 하기" 카드가 하던 문제(없으면 복습할 문제, 다음 추천 문제)를 보여줘요. 카테고리를 누르면 그 카테고리에서 안 푼 첫 문제로 갑니다.
+- **홈**: "이어서 하기" 카드가 하던 문제(없으면 복습할 문제, 다음 추천 문제)를 보여줘요. 그 아래 **학습 코스** 카드로 주제별 순서를 따라가거나, 환경별 카테고리를 눌러 안 푼 첫 문제로 갈 수 있어요.
 - **왼쪽 목록**: 위쪽 탭으로 환경(Linux/Script/Git/Docker/AWS/pwsh/SQL)을 고르고, 카테고리를 눌러 펼치고 접어요. 점(●○)은 카테고리 안 문제들의 상태예요. `남은 문제만` 을 켜면 통과한 문제를 숨겨요. 검색(`/` 키)은 모든 환경에서 찾아줘요.
 - **실습 화면**: 문제·힌트·해설·기록 탭 / 가운데 경계를 드래그해서 크기 조절 / `⇤` 로 문제 패널 접기 / `A−` `A+` 터미널 글자 크기
 - **단축키**: `Ctrl`+`Enter` 채점 (터미널 안에서도), `Alt`+`←` `→` 이전·다음 문제, `?` 도움말
@@ -136,10 +150,13 @@ command-lab/
 │   ├── catalog.js        envs/, scenarios/ 폴더를 읽어 카탈로그 구성
 │   ├── docker.js         이미지 빌드, 컨테이너 생성, 명령 실행, 웹 터미널 연결
 │   ├── session.js        시작 → 채점 → 종료 (CLI와 웹이 공유)
-│   ├── progress.js       기록과 복습 일정 (~/.cmdlab/progress.json)
+│   ├── progress.js       기록과 복습 일정, 첫 통과까지의 실패·힌트·시간 (~/.cmdlab/progress.json)
+│   ├── difficulty.js     기록으로 본 체감 난이도 (lab stats)
+│   ├── lint.js           문서 형식 검사 (lab validate)
 │   └── server.js         웹 UI 서버 (REST + WebSocket 터미널)
 ├── web/                  브라우저 UI (xterm.js)
 ├── lib/                  컨테이너 안으로 복사되는 공통 도구 (task/hint/check, 채점 헬퍼)
+├── tracks/               학습 코스 (주제별 문제 순서)
 ├── envs/<환경>/          환경 = 연습할 CLI 종류 (Dockerfile + env.yaml)
 └── scenarios/<환경>/<시나리오>/   문제 상황 하나
 ```
@@ -158,6 +175,7 @@ lab check ──▶ check.sh (root: 결과 상태 검사, ✔/✘ 출력, 종료
 
 - **새 시나리오**: `scenarios/<환경>/<번호-이름>/` 폴더에 `scenario.yaml`, `task.md`, `setup.sh`, `check.sh`(+ `hints.md`, `debrief.md`, `solution.sh`)
 - **새 환경**: `envs/<이름>/` 폴더에 `Dockerfile`, `env.yaml`
+- **새 코스**: `tracks/<번호-이름>.yaml` 에 제목·설명·문제 순서
 - **검증**: `lab validate` (구조 검사), `lab test <시나리오>` (풀기 전엔 실패, 모범 풀이 후엔 통과, `traps/` 의 틀린 풀이는 기대한 이유로 실패하는지 자동 확인)
 
 ## 문제 해결

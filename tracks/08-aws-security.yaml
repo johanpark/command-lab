@@ -1,0 +1,17 @@
+title: AWS 보안 점검
+icon: 🛡️
+description: 열린 포트·공개 버킷·과한 권한·새는 비밀번호를 찾아 막는다. IAM 정책을 실제로 읽고 쓰는 연습.
+steps:
+  - aws/03-open-ssh
+  - aws/07-public-bucket
+  - aws/08-iam-least-privilege
+  - aws/18-iam-offboarding
+  - aws/34-instance-role
+  - aws/28-sg-reference
+  - aws/26-kms-encrypt
+  - aws/06-secrets-manager
+  - aws/41-secret-leak
+  - aws/36-acm-renewal
+  - aws/40-waf-block
+  - aws/43-vendor-audit-role
+  - aws/44-scp-guardrails

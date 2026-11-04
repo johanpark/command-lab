@@ -10,6 +10,7 @@ export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '
 export const ENVS_DIR = path.join(ROOT, 'envs');
 export const SCENARIOS_DIR = path.join(ROOT, 'scenarios');
 export const LIB_DIR = path.join(ROOT, 'lib');
+export const TRACKS_DIR = path.join(ROOT, 'tracks');
 
 const ENV_DEFAULTS = {
   shell: ['bash', '-l'],
@@ -90,17 +91,40 @@ export function loadScenarios() {
   return scenarios;
 }
 
+// 학습 코스: tracks/<순서>-<이름>.yaml — 주제별로 문제를 푸는 순서를 묶는다
+export function loadTracks() {
+  if (!fs.existsSync(TRACKS_DIR)) return [];
+  return fs
+    .readdirSync(TRACKS_DIR)
+    .filter((f) => f.endsWith('.yaml') && !f.startsWith('_'))
+    .sort()
+    .map((f) => {
+      const meta = readYaml(path.join(TRACKS_DIR, f));
+      if (!meta) return null;
+      return {
+        id: f.replace(/^\d+-/, '').replace(/\.yaml$/, ''),
+        file: f,
+        title: meta.title ?? f,
+        icon: meta.icon ?? '🧭',
+        description: meta.description ?? '',
+        steps: Array.isArray(meta.steps) ? meta.steps.map(String) : [],
+      };
+    })
+    .filter(Boolean);
+}
+
 export function loadCatalog() {
   loadErrors.length = 0;
   const envs = loadEnvs();
   const scenarios = loadScenarios();
+  const tracks = loadTracks();
   const envOrder = new Map(envs.map((e, i) => [e.id, i]));
   scenarios.sort(
     (a, b) =>
       (envOrder.get(a.env) ?? 99) - (envOrder.get(b.env) ?? 99) ||
       a.id.localeCompare(b.id),
   );
-  return { envs, scenarios };
+  return { envs, scenarios, tracks };
 }
 
 function readOptional(file) {
@@ -176,7 +200,7 @@ export function findScenario(scenarios, query) {
 
 // 카탈로그 구조 검사 (lab validate)
 export function validateCatalog() {
-  const { envs, scenarios } = loadCatalog();
+  const { envs, scenarios, tracks } = loadCatalog();
   const problems = [...loadErrors];
   const warnings = [];
   for (const env of envs) {
@@ -213,5 +237,17 @@ export function validateCatalog() {
     lint.errors.forEach((e) => problems.push(`${s.id}: ${e}`));
     lint.warnings.forEach((w) => warnings.push(`${s.id}: ${w}`));
   }
-  return { envs, scenarios, problems, warnings };
+  const ids = new Set(scenarios.map((s) => s.id));
+  const trackIds = new Set();
+  for (const t of tracks) {
+    if (trackIds.has(t.id)) problems.push(`tracks/${t.file}: 같은 코스 이름(${t.id})이 또 있어요`);
+    trackIds.add(t.id);
+    if (!t.title || !t.description) problems.push(`tracks/${t.file}: title, description 이 필요해요`);
+    if (t.steps.length < 2) problems.push(`tracks/${t.file}: steps 에 문제가 2개 이상 있어야 해요`);
+    t.steps.forEach((id, i) => {
+      if (!ids.has(id)) problems.push(`tracks/${t.file}: ${i + 1}번째 문제 '${id}' 가 없어요`);
+      if (t.steps.indexOf(id) !== i) problems.push(`tracks/${t.file}: '${id}' 가 두 번 들어 있어요`);
+    });
+  }
+  return { envs, scenarios, tracks, problems, warnings };
 }

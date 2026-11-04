@@ -1,0 +1,19 @@
+title: 데이터 다루기
+icon: 📊
+description: SQL 조회·집계부터 사고 복구, 그리고 엑셀·CSV·JSON·API 데이터를 스크립트로 처리하기.
+steps:
+  - sql/01-first-query
+  - sql/03-join-report
+  - sql/09-null-traps
+  - sql/10-date-range
+  - sql/07-export-csv
+  - sql/02-fix-data
+  - sql/08-update-without-where
+  - sql/05-restore-backup
+  - sql/06-duplicates
+  - sql/04-slow-query
+  - script/02-excel-report
+  - script/03-js-orders
+  - script/05-csv-encoding
+  - script/06-api-pagination
+  - powershell/02-object-pipeline
