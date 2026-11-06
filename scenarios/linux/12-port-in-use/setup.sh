@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 source /opt/cmdlab/lib/helpers.sh
 set -e
-name=$(rand_pick legacy-api old-gateway api-v1 proxy-server)
+# 이름은 모두 10글자 이상: lsof·top 은 이름을 잘라 보여 준다(lsof 9글자) → 잘린 이름을 적는 실수를 배우게
+name=$(rand_pick legacy-api old-gateway api-server-v1 proxy-server)
 secret_set name "$name"
 # nc(netcat) 를 이름만 바꿔 복사해서 '그럴듯한' 서버 프로세스로 쓴다
 for b in "$name" metrics myapp; do cp /usr/bin/nc.openbsd "/usr/local/bin/$b"; done

@@ -18,9 +18,12 @@ $ ~/myapp/start.sh
 ## 써볼 명령어
 | 명령어 | 하는 일 |
 |---|---|
-| `ss -ltnp` | 열려 있는(Listen) TCP 포트와 프로세스 |
-| `sudo lsof -i :8080` | 8080 포트를 쓰는 프로세스 |
+| `ss -ltn` | 열려 있는(Listen) TCP 포트 |
+| `sudo ss -ltnp` | 포트와 그 포트를 쓰는 **프로세스 이름·PID** |
+| `sudo lsof +c 0 -i :8080` | 8080 포트를 쓰는 프로세스 (`+c 0`: 이름을 자르지 않음) |
 | `ps -p PID -o pid,user,comm,args` | PID 로 프로세스 자세히 보기 |
-| `kill PID` | 종료 |
+| `sudo kill PID` | 종료 |
 
 > 💡 `ss` 옵션 외우는 법: **l**isten, **t**cp, **n**umeric(포트를 숫자로), **p**rocess
+>
+> ⚠️ 다른 사용자(root 등)의 프로세스는 `sudo` 없이 보면 **프로세스 칸이 비어 있어요.** 이름이 안 보이면 `sudo` 를 붙이세요.

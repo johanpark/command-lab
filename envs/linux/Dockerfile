@@ -9,7 +9,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
       bash-completion ca-certificates cron curl file gawk iproute2 iputils-ping jq less lsof \
-      busybox nano netcat-openbsd openssh-client openssh-server procps rsync psmisc sudo tree tzdata unzip vim-tiny wget zip \
+      busybox nano net-tools netcat-openbsd openssh-client openssh-server procps rsync psmisc sudo tree tzdata unzip vim-tiny wget zip \
  && ln -fs "/usr/share/zoneinfo/$TZ" /etc/localtime \
  && rm -rf /var/lib/apt/lists/*
 

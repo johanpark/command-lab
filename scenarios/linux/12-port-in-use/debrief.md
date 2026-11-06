@@ -11,8 +11,9 @@ ss -ltnp | grep 8080            # 이제 myapp
 ```
 
 ## 기억할 것
-- **"Address already in use"** 를 보면 바로 `ss -ltnp` (또는 `sudo lsof -i :포트`).
-- 다른 사용자(root)의 프로세스는 일반 권한으로는 이름이 안 보이고 종료도 안 돼요(`Operation not permitted`). 그래서 `sudo` 가 필요합니다.
+- **"Address already in use"** 를 보면 바로 `sudo ss -ltnp` (또는 `sudo lsof +c 0 -i :포트`, `sudo netstat -ltnp`).
+- 다른 사용자(root)의 프로세스는 일반 권한으로는 이름이 안 보이고(`ss -ltnp` 의 프로세스 칸이 빈칸) 종료도 안 돼요(`Operation not permitted`). 그래서 `sudo` 가 필요합니다.
+- `lsof` 는 이름을 9글자, `top` 은 칸 너비만큼 잘라 보여 줘요(`old-gatew`, `old-gat+`). 정확한 이름은 `ss -p`, `ps -o comm`, 또는 `lsof +c 0`.
 - 종료 직후엔 포트가 아주 잠깐 남아 있을 수 있어요. 다시 확인하고 시작하세요.
 
 ## 백그라운드 실행 정리
