@@ -6,9 +6,11 @@ import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import { loadCatalog, loadTraps } from '../../src/catalog.js';
 
-const SHARD_WEIGHT = 40; // 조각 하나의 크기: 시나리오 1 + 함정 수 (컨테이너 하나 ≈ 20초)
+const SHARD_WEIGHT = 40; // 조각 하나의 크기: (시나리오 1 + 함정 수) × 환경 비용. AWS 컨테이너 하나 ≈ 20초 = 1
+// 컨테이너가 빨리 뜨는 환경은 싸게 친다 (AWS 는 가짜 AWS 서버, Docker 는 안쪽 dockerd 를 띄워서 느리다)
+const COST = { aws: 1, docker: 1 };
 const { envs, scenarios } = loadCatalog();
-const weight = (s) => 1 + loadTraps(s).length;
+const weight = (s) => (1 + loadTraps(s).length) * (COST[s.env] ?? 0.35);
 
 let picked;
 const base = process.env.BASE_SHA;

@@ -77,6 +77,10 @@ export function lintScenario(s, meta) {
     if (parts.length < 2 || parts.length > 6) warnings.push(`hints.md: 힌트가 ${parts.length}개예요 (2~6개 권장)`);
   }
   if (read(s.dir, 'debrief.md') === null) warnings.push('debrief.md(해설) 가 없어요');
+  const traps = path.join(s.dir, 'traps');
+  if (!fs.existsSync(traps) || !fs.readdirSync(traps).some((f) => /\.(sh|ps1)$/.test(f))) {
+    warnings.push('함정 테스트(traps/)가 없어요. 학습자가 할 법한 틀린 풀이를 하나 이상 넣어 주세요');
+  }
   if (!['solution.sh', 'solution.ps1'].some((f) => fs.existsSync(path.join(s.dir, f)))) {
     warnings.push('모범 풀이(solution.sh/.ps1) 가 없어 lab test 로 검증할 수 없어요');
   }

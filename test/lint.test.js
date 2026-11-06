@@ -11,8 +11,9 @@ const TASK = '# 제목\n\n## 목표\n1. 하기\n';
 
 function lint(files, meta = META) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'lint-'));
-  for (const [f, text] of Object.entries({ 'task.md': TASK, 'hints.md': 'a\n---\nb', 'debrief.md': 'd', 'solution.sh': 'x', ...files })) {
-    fs.writeFileSync(path.join(dir, f), text);
+  fs.mkdirSync(path.join(dir, 'traps'));
+  for (const [f, text] of Object.entries({ 'task.md': TASK, 'hints.md': 'a\n---\nb', 'debrief.md': 'd', 'solution.sh': 'x', 'traps/t.sh': '# 설명: x', ...files })) {
+    if (text !== null) fs.writeFileSync(path.join(dir, f), text);
   }
   return lintScenario({ dir }, meta);
 }
@@ -48,4 +49,5 @@ test('메타데이터와 힌트', () => {
   assert.ok(errs({ 'hints.md': 'a\n---\n---\nb' }).some((e) => /비어 있는 힌트/.test(e)));
   assert.ok(lint({ 'hints.md': 'a' }).warnings.some((w) => /힌트가 1개/.test(w)));
   assert.ok(errs({ 'task.md': '제목 없음\n' }).some((e) => /첫 줄/.test(e)));
+  assert.ok(lint({ 'traps/t.sh': null }).warnings.some((w) => /함정 테스트/.test(w)));
 });
